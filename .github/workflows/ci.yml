@@ -140,7 +140,7 @@ jobs:
       - name: Run migration preflight
         env:
           MIGRATION_PREFLIGHT_TARGET: ${{ inputs.target_environment }}
-          MIGRATION_PREFLIGHT_OUTPUT: apps/api/migration-preflight-report.json
+          MIGRATION_PREFLIGHT_OUTPUT: migration-preflight-report.json
         run: npm run preflight:formal-env
 
       - name: Upload migration preflight report
