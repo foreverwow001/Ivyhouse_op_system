@@ -1,6 +1,7 @@
 ---
 description: "用於實作程式碼變更、更新文件，或執行目前 live workflow 所需的 targeted validation。"
 name: "Ivy Engineer"
+model: "GPT-5.4 (copilot)"
 tools: [read, edit, search, execute, todo]
 user-invocable: true
 ---

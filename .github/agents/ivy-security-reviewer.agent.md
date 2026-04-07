@@ -1,6 +1,7 @@
 ---
 description: "用於以 read-only 方式審查固定 security package，聚焦 attack surface、unsafe defaults 與 secrets/permissions handling。"
 name: "Ivy Security Reviewer"
+model: "Claude Sonnet 4.6 (copilot)"
 tools: [read, search]
 user-invocable: true
 ---

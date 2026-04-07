@@ -1,6 +1,7 @@
 ---
 description: "用於以 read-only 方式審查規格、流程狀態、RBAC、共享資料與財務一致性等領域邏輯。"
 name: "Ivy Domain Expert"
+model: "GPT-5.4 (copilot)"
 tools: [read, search]
 user-invocable: true
 ---

@@ -1,6 +1,7 @@
 ---
 description: "協調 /dev workflow、維持 gates 與 reviewer 邊界，並將實作交給 Engineer。"
 name: "Ivy Coordinator"
+model: "GPT-5.4 (copilot)"
 tools: [read, search, execute, todo]
 user-invocable: true
 ---

@@ -1,6 +1,7 @@
 ---
 description: "在動手實作前先產出可執行的規格、依據與缺口，供 Coordinator 與 Engineer 接手。"
 name: "Ivy Planner"
+model: "GPT-5.4 (copilot)"
 tools: [read, search, todo]
 user-invocable: true
 ---

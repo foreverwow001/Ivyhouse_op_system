@@ -1,6 +1,7 @@
 ---
 description: "用於以 read-only 方式審查固定 QA package，聚焦 regression 風險、測試覆蓋與 release readiness。"
 name: "Ivy QA Reviewer"
+model: "Claude Sonnet 4.6 (copilot)"
 tools: [read, search]
 user-invocable: true
 ---
