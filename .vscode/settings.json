@@ -5,6 +5,7 @@
   "remote.autoForwardPortsSource": "hybrid",
   "ivyhouseWorkflow.defaultMode": "chat-primary-with-one-shot-reviewers",
   "ivyhouseReviewerCli.command": "copilot",
+  "ivyhouseReviewerCli.wrapperPath": "${workspaceFolder}/.github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py",
   "ivyhouseReviewerCli.allowedCommands": [
     "copilot"
   ],

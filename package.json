@@ -13,6 +13,8 @@
     "start:portal": "npm run start --workspace @ivyhouse/portal",
     "dev:api": "npm run start:dev --workspace @ivyhouse/api",
     "prisma:generate": "npm run prisma:generate --workspace @ivyhouse/api",
+    "preflight:formal-env": "npm run preflight:migration --workspace @ivyhouse/api",
+    "drill:formal-env": "npm run drill:migration-replay --workspace @ivyhouse/api",
     "test:api:fixtures": "npm run guard:maintainer-paths && npm run test:fixtures --workspace @ivyhouse/api",
     "test:api:mapping:fixtures": "npm run guard:maintainer-paths && npm run test:mapping:fixtures --workspace @ivyhouse/api",
     "test:api:mapping:smoke": "npm run guard:maintainer-paths && npm run test:mapping:smoke --workspace @ivyhouse/api",

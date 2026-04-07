@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+
+import { clearPortalSession, readPortalSession, type PortalSession } from "../../lib/portal-session";
 
 type FlowNodeStatus = "available" | "coming-soon";
 
@@ -26,6 +29,13 @@ type FlowNode = {
   note: string;
   roles: string[];
   icon: FlowNodeIcon;
+};
+
+const availableNodeHrefMap: Partial<Record<FlowNode["key"], string>> = {
+  intake: "/intake",
+  "daily-ops": "/daily-ops",
+  "production-planning": "/daily-ops?view=planning",
+  "inventory-count": "/daily-ops?view=inventory-count",
 };
 
 const flowNodes: FlowNode[] = [
@@ -273,8 +283,28 @@ function FlowNodeCard({
 }
 
 export default function LandingPage() {
+  const router = useRouter();
   const [selectedNodeKey, setSelectedNodeKey] = useState("intake");
+  const [session, setSession] = useState<PortalSession | null>(null);
   const selectedNode = flowNodes.find((node) => node.key === selectedNodeKey) ?? flowNodes[0];
+
+  useEffect(() => {
+    const portalSession = readPortalSession();
+    if (!portalSession) {
+      router.replace("/login");
+      return;
+    }
+    setSession(portalSession);
+  }, [router]);
+
+  function handleSignOut() {
+    clearPortalSession();
+    router.replace("/login");
+  }
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <main className="portal-shell">
@@ -289,10 +319,11 @@ export default function LandingPage() {
           </div>
 
           <div className="topbar-actions">
-            <span className="topbar-badge">Slice 1</span>
-            <Link className="button-secondary" href="/login">
-              返回登入
-            </Link>
+            <span className="topbar-badge">{session.roleCodes.join(" / ")}</span>
+            <span className="topbar-badge topbar-badge-soft">{session.displayName}</span>
+            <button className="button-secondary" type="button" onClick={handleSignOut}>
+              清除 Session
+            </button>
           </div>
         </header>
 
@@ -385,6 +416,12 @@ export default function LandingPage() {
           </dl>
 
           <p className="detail-note">{selectedNode.note}</p>
+
+          {selectedNode.status === "available" && availableNodeHrefMap[selectedNode.key] ? (
+            <Link className="button-primary detail-cta" href={availableNodeHrefMap[selectedNode.key] as string}>
+              {selectedNode.key === "intake" ? "進入 Intake Workbench" : "進入 Daily Ops Workbench"}
+            </Link>
+          ) : null}
         </section>
       </section>
     </main>

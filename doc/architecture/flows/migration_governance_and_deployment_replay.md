@@ -1,6 +1,6 @@
 # Migration Governance 與 Deployment Replay
 
-更新日期：2026-04-03
+更新日期：2026-04-07
 
 Authoritative source：是
 
@@ -81,6 +81,34 @@ psql '<target-database-url>' -c 'SELECT "eventType", "sourceType", "sourceId", "
 4. 若需要 opening balance 或 first batch 驗證，對應營運窗口與責任角色已排定。
 5. 若 migration 會影響共享契約或高風險交易表，對應 review 與停等點已完成。
 
+## Repo-native Tooling
+
+從 `Idx-023` Slice 7 起，repo 內建兩個正式工具入口：
+
+1. read-only preflight：`DATABASE_URL='<target>' npm run preflight:migration`
+2. staging clone / scratch DB replay drill：`DATABASE_URL='<source>' ADMIN_DATABASE_URL='<admin>' npm run drill:migration-replay`
+
+### read-only preflight
+
+- 作用：比對 repo `apps/api/prisma/migrations/**` 與目標環境 `_prisma_migrations`，並回報 extension inventory。
+- 輸出：JSON report，至少包含 target、資料庫識別、pending repo migrations、unexpected database migrations、failed migrations、extension inventory。
+- fail-closed 條件：
+  - repo 有 migration 未套用
+  - 目標環境存在未回掛 repo 的 migration / 手動 hotfix
+  - `_prisma_migrations` 存在未完成或 rollback 中斷的記錄
+  - 缺少明確要求的 extension
+
+### staging clone / scratch DB replay drill
+
+- 作用：在同一 PostgreSQL server 的臨時資料庫中重播 `migrate deploy`、`seed`、preflight 與 smoke，作為 non-destructive rollback drill evidence。
+- 限制：
+  - 需要 `ADMIN_DATABASE_URL`
+  - 只可在 staging clone 或 DBA 核准的 scratch DB server 執行
+  - 不應直接對 production 主庫建立臨時 DB
+  - 若 target label 命中 `production`，必須明確設定 `ALLOW_PRODUCTION_REPLAY_DRILL=true` 才能繼續
+  - `DATABASE_URL` 與 `ADMIN_DATABASE_URL` 必須指向同一個 PostgreSQL server；若 host / port 不一致，腳本必須 fail-closed
+- 輸出：JSON drill report，包含每個 step 的命令、狀態與 stdout/stderr tail。
+
 ## Rollback 與 Hotfix Policy
 
 ### 核心限制
@@ -97,6 +125,11 @@ psql '<target-database-url>' -c 'SELECT "eventType", "sourceType", "sourceId", "
 | seed 失敗或 `AuditLog` 缺失 | 否 | 修正 seed / owner 載體版本後重跑 |
 | opening balance rehearsal 失敗 | 否 | 取消窗口、保留證據、重新開窗 |
 | mainline smoke 失敗 | 視情況 | 保留批次與 audit 證據，修正後重跑 |
+
+### Slice 7 補充
+
+- release-preflight workflow 僅執行 read-only preflight，不自動跑 scratch DB drill。
+- scratch DB drill 屬 go-live 前人工/受控 runner 活動，證據應附在對應 log 或 release pack，不得只留 terminal 口頭描述。
 
 ### Hotfix Migration
 

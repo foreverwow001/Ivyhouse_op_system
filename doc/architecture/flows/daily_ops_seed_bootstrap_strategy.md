@@ -27,7 +27,7 @@ Authoritative source：否（implementation rollout strategy）
 
 ### preflight 成功判定
 
-- 目標環境可成功執行 migration dry readback 或等價連線檢查。
+- `npm run preflight:migration` 回傳 `pass`，或等價 read-only migration preflight 通過。
 - bootstrap 使用的 CSV owner 檔名、版本與 hash 已可追溯。
 - 首盤窗口與第一批需求導入窗口已被明確排定，且責任角色已知。
 
@@ -46,6 +46,8 @@ Authoritative source：否（implementation rollout strategy）
 
 ```bash
 cd /workspaces/Ivyhouse_op_system/apps/api
+DATABASE_URL='<target-database-url>' MIGRATION_PREFLIGHT_TARGET='<target-environment>' npm run preflight:migration
+
 DATABASE_URL='<target-database-url>' npm run prisma:migrate:deploy
 
 psql '<target-database-url>' -c "SELECT migration_name, finished_at FROM \"_prisma_migrations\" ORDER BY finished_at DESC LIMIT 5;"
@@ -60,6 +62,7 @@ psql '<target-database-url>' -c "SELECT migration_name, finished_at FROM \"_pris
 
 - 若 migration 失敗發生在 service 尚未正式切流前，先停止部署並修復 migration path，不得跳過 migration 直接以 `db push` 代替。
 - 若 migration 失敗原因與正式環境 history 差異有關，應回到 `Idx-019` 的 governance / replay 流程處理，不得在 runbook 中假裝已可安全繼續。
+- 若 read-only preflight 已顯示 repo migration 缺口、未回掛 hotfix 或 extension 異常，先停在 preflight，不得直接進入 `migrate deploy`。
 
 ### 2. 執行 bootstrap seed
 
@@ -220,6 +223,14 @@ psql '<target-database-url>' -c "SELECT \"eventType\", \"sourceType\", \"sourceI
 - 失敗節點、補救步驟與重新啟動條件均已被記錄。
 - 沒有未經審計的資料改寫或假裝完成的切流。
 - 後續操作者可根據 log 判讀目前是 blocked、需 rerun，還是可重新開窗。
+
+## staging clone / scratch DB drill
+
+- 若需要在 go-live 前做 non-destructive rollback drill，應優先使用 staging clone 或 DBA 核准的 scratch DB server。
+- repo-native 入口為：`DATABASE_URL='<source-db>' ADMIN_DATABASE_URL='<admin-db>' npm run drill:migration-replay`
+- 若 drill target 明確標記為 production，必須另外設定 `ALLOW_PRODUCTION_REPLAY_DRILL=true`；否則腳本會 fail-closed。
+- 此 drill 會建立臨時資料庫、重播 `migrate deploy`、`seed`、preflight 與 smoke；不應直接對 production 主庫執行。
+- 若 drill 失敗，應以 `steps[*].label` 對應失敗節點，回到 rollback matrix 做停等與補救，不得直接切流。
 
 ## rehearsal checklist
 

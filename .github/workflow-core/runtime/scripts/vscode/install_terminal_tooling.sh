@@ -51,4 +51,6 @@ install_missing_cli() {
 install_missing_cli "Copilot" "copilot" "@github/copilot"
 
 echo
-echo "Installed reviewer CLI tooling. Next step: run 'python .github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py --json' to confirm readiness."
+echo "Installed reviewer CLI tooling."
+echo "Next step 1: run 'python .github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py --json' to confirm base command + wrapper readiness."
+echo "Next step 2: run 'python .github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py --help' to verify one-shot reviewer wrapper."

@@ -16,9 +16,9 @@ const maintainerDataRelativePaths: Record<string, string> = {
   '2026-03-31_出貨及行政耗材總表_template.csv':
     'project_maintainers/data/active/supplies/2026-03-31_出貨及行政耗材總表_template.csv',
   '2026-04-01_半成品主檔第一版草案.csv':
-    'project_maintainers/data/drafts/semifinished/2026-04-01_半成品主檔第一版草案.csv',
+    'project_maintainers/data/active/master-data/2026-04-01_半成品主檔第一版草案.csv',
   '2026-04-01_原料主檔最低版本草案.csv':
-    'project_maintainers/data/drafts/materials-and-recipes/2026-04-01_原料主檔最低版本草案.csv',
+    'project_maintainers/data/active/master-data/2026-04-01_原料主檔最低版本草案.csv',
 };
 
 export function getMaintainerDataRelativePath(fileName: string) {

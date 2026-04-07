@@ -461,7 +461,7 @@ shared key 變更前，至少要補齊：
 ### 正式 owner
 
 - owner module：Production
-- owner 文件：`project_maintainers/data/drafts/semifinished/2026-04-01_半成品主檔第一版草案.csv`
+- owner 文件：`project_maintainers/data/active/master-data/2026-04-01_半成品主檔第一版草案.csv`
 - owner 欄位：`半成品SKU_草案`
 
 ### key 用途
@@ -506,7 +506,7 @@ shared key 變更前，至少要補齊：
 ### 正式 owner
 
 - owner module：Production
-- owner 文件：`project_maintainers/data/drafts/semifinished/2026-04-01_半成品主檔第一版草案.csv`
+- owner 文件：`project_maintainers/data/active/master-data/2026-04-01_半成品主檔第一版草案.csv`
 - owner 欄位：`半成品SKU_草案`
 
 ### key 用途

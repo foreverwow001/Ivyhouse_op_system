@@ -9,6 +9,8 @@
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
     "prisma:migrate:dev": "prisma migrate dev --schema prisma/schema.prisma",
     "prisma:migrate:deploy": "prisma migrate deploy --schema prisma/schema.prisma",
+    "preflight:migration": "node scripts/migration-preflight.js",
+    "drill:migration-replay": "node scripts/migration-replay-drill.js",
     "prisma:seed": "prisma db seed --schema prisma/schema.prisma",
     "test:fixtures": "npm run build && node --test test/intake-parser-fixtures.test.js",
     "test:mapping:fixtures": "npm run build && node --test test/intake-mapping-fixtures.test.js",

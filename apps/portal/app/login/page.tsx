@@ -3,14 +3,25 @@
 import { startTransition, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
+import {
+  createPortalSession,
+  getDefaultApiBaseUrl,
+  type PortalRolePreset,
+  writePortalSession,
+} from "../../lib/portal-session";
+
 type LoginFormState = {
   account: string;
   password: string;
+  rolePreset: PortalRolePreset;
+  apiBaseUrl: string;
 };
 
 const initialFormState: LoginFormState = {
   account: "",
   password: "",
+  rolePreset: "accounting",
+  apiBaseUrl: getDefaultApiBaseUrl(),
 };
 
 function wait(durationMs: number) {
@@ -52,6 +63,14 @@ export default function LoginPage() {
       setIsSubmitting(false);
       return;
     }
+
+    writePortalSession(
+      createPortalSession({
+        account: trimmedAccount,
+        rolePreset: formState.rolePreset,
+        apiBaseUrl: formState.apiBaseUrl,
+      }),
+    );
 
     startTransition(() => {
       router.push("/landing");
@@ -143,8 +162,48 @@ export default function LoginPage() {
               />
             </label>
 
+            <label className="field-group" htmlFor="rolePreset">
+              <span className="field-label">角色預設</span>
+              <select
+                id="rolePreset"
+                name="rolePreset"
+                className="input-field"
+                value={formState.rolePreset}
+                onChange={(event) => {
+                  setFormState((currentState) => ({
+                    ...currentState,
+                    rolePreset: event.target.value as PortalRolePreset,
+                  }));
+                }}
+                disabled={isSubmitting}
+              >
+                <option value="accounting">會計 / 行政</option>
+                <option value="operations">生產 / 包裝及出貨</option>
+                <option value="supervisor">主管 / 管理員</option>
+              </select>
+            </label>
+
+            <label className="field-group" htmlFor="apiBaseUrl">
+              <span className="field-label">API Base URL</span>
+              <input
+                id="apiBaseUrl"
+                name="apiBaseUrl"
+                type="url"
+                className="input-field"
+                value={formState.apiBaseUrl}
+                onChange={(event) => {
+                  setFormState((currentState) => ({
+                    ...currentState,
+                    apiBaseUrl: event.target.value,
+                  }));
+                }}
+                placeholder="http://localhost:3000/api"
+                disabled={isSubmitting}
+              />
+            </label>
+
             <p className="helper-copy">
-              這個切片只建立 login shell。若欄位不足，會顯示本地錯誤提示；格式完整時會導向 landing shell。
+              這個切片會在本地建立 Portal session bridge，帶入 principal、role preset 與 API base URL，再導向 landing / workbench。
             </p>
 
             {feedbackMessage ? (

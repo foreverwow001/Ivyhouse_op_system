@@ -410,6 +410,12 @@ async function verifyRerunAndRevisionFlow() {
     assert.equal(auditLogs[6].performedBy, principalActors.reviser);
     assert.equal(auditLogs[7].performedBy, principalActors.reviseApprover);
 
+    assert.equal(auditLogs[1].payload.approvalRoleBasis, '主管');
+    assert.equal(auditLogs[3].payload.approvalRoleBasis, '主管');
+    assert.equal(auditLogs[7].payload.approvalRoleBasis, '主管');
+    assert.ok(auditLogs[7].payload.actor.roleCodes.includes('管理員'));
+    assert.ok(auditLogs[7].payload.actor.roleCodes.includes('主管'));
+
     assert.equal(
       ledgerEntries.filter((entry) => entry.eventType === 'BOM_RESERVATION' && entry.itemSku === 'A1').length,
       3,

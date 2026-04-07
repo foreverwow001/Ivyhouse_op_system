@@ -185,7 +185,7 @@ export class ProductionPlanningService {
     dto: ProductionPlanApprovalDecisionDto,
     principal: PortalSessionPrincipal,
   ) {
-    this.assertSupervisorApprover(principal);
+    const approvalContext = this.assertSupervisorApprover(principal);
 
     const plan = await this.prisma.productionPlanHeader.findUnique({
       where: { id: planId },
@@ -227,6 +227,7 @@ export class ProductionPlanningService {
           decision: dto.decision,
           approvalNote,
           actor: this.buildPrincipalAuditPayload(principal),
+          approvalRoleBasis: approvalContext.roleBasis,
           singlePersonOverride,
         },
       });
@@ -311,6 +312,7 @@ export class ProductionPlanningService {
         decision: dto.decision,
         bomRunId: bomRun.id,
         actor: this.buildPrincipalAuditPayload(principal),
+        approvalRoleBasis: approvalContext.roleBasis,
         singlePersonOverride,
       },
     });
@@ -323,7 +325,7 @@ export class ProductionPlanningService {
     dto: ProductionPlanApprovalDecisionDto,
     principal: PortalSessionPrincipal,
   ) {
-    this.assertSupervisorApprover(principal);
+    const approvalContext = this.assertSupervisorApprover(principal);
 
     const bomRun = await this.prisma.bomReservationRun.findUnique({
       where: { id: runId },
@@ -382,6 +384,7 @@ export class ProductionPlanningService {
         bomRunId: updatedRun.id,
         decision: dto.decision,
         actor: this.buildPrincipalAuditPayload(principal),
+        approvalRoleBasis: approvalContext.roleBasis,
         singlePersonOverride,
       },
     });
@@ -414,6 +417,10 @@ export class ProductionPlanningService {
     if (!principal.roleCodes.includes('主管')) {
       throw new ForbiddenException('production-planning approval 必須由主管角色執行');
     }
+
+    return {
+      roleBasis: '主管' as const,
+    };
   }
 
   private buildPrincipalAuditPayload(principal: PortalSessionPrincipal) {

@@ -1,0 +1,150 @@
+name: Ivyhouse CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: Release preflight target environment
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+
+concurrency:
+  group: ivyhouse-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: ivyhouse_api_ci
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ivyhouse_api_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres@127.0.0.1:5432/ivyhouse_api_ci?schema=public
+      ADMIN_DATABASE_URL: postgresql://postgres@127.0.0.1:5432/postgres
+      NEXT_PUBLIC_PORTAL_API_BASE_URL: http://127.0.0.1:3000/api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Guard maintainer paths
+        run: npm run guard:maintainer-paths
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Build API
+        run: npm run build:api
+
+      - name: Build Portal
+        run: npm run build:portal
+
+      - name: Intake parser fixtures
+        run: npm run test:api:fixtures
+
+      - name: Intake mapping fixtures
+        run: npm run test:api:mapping:fixtures
+
+      - name: Intake API smoke
+        run: npm run test:api:smoke
+
+      - name: Daily ops mainline smoke
+        run: npm run test:daily-ops:mainline --workspace @ivyhouse/api
+
+  release-preflight:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: ivyhouse_release_preflight
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ivyhouse_release_preflight"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: ${{ inputs.target_environment == 'staging' && vars.DATABASE_URL || secrets.DATABASE_URL }}
+      ADMIN_DATABASE_URL: ${{ inputs.target_environment == 'staging' && vars.ADMIN_DATABASE_URL || secrets.ADMIN_DATABASE_URL }}
+      NEXT_PUBLIC_PORTAL_API_BASE_URL: ${{ vars.NEXT_PUBLIC_PORTAL_API_BASE_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Validate environment bindings
+        env:
+          TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
+        run: |
+          set -e
+          missing=0
+
+          for key in DATABASE_URL ADMIN_DATABASE_URL NEXT_PUBLIC_PORTAL_API_BASE_URL; do
+            if [ -z "${!key}" ]; then
+              echo "::error::${TARGET_ENVIRONMENT} 缺少 required binding: ${key}"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+          echo "${TARGET_ENVIRONMENT} release preflight bindings are present."
+
+      - name: Run migration preflight
+        env:
+          MIGRATION_PREFLIGHT_TARGET: ${{ inputs.target_environment }}
+          MIGRATION_PREFLIGHT_OUTPUT: apps/api/migration-preflight-report.json
+        run: npm run preflight:formal-env
+
+      - name: Upload migration preflight report
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-preflight-${{ inputs.target_environment }}
+          path: apps/api/migration-preflight-report.json

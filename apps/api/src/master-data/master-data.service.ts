@@ -147,12 +147,10 @@ export class MasterDataService {
         semiFinished: this.loadActiveSkuSet(
           '2026-04-01_半成品主檔第一版草案.csv',
           '半成品SKU_草案',
-          ['草稿', '啟用'],
         ),
         rawMaterial: this.loadActiveSkuSet(
           '2026-04-01_原料主檔最低版本草案.csv',
           '原料代碼',
-          ['草稿', '啟用'],
         ),
         material: this.loadActiveSkuSet('2026-03-25_外包裝材料主檔_template.csv', '外包裝材料SKU_正式'),
         shippingSupplyManual: this.loadShippingSupplyManualSet(),

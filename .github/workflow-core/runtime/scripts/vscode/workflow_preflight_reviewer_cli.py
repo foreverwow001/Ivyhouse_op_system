@@ -65,12 +65,27 @@ def resolve_pinned_command_path(repo_root: Path) -> str | None:
     return None
 
 
+def resolve_wrapper_path(repo_root: Path) -> Path:
+    settings = load_workspace_settings(repo_root)
+    value = settings.get("ivyhouseReviewerCli.wrapperPath")
+    if isinstance(value, str) and value.strip():
+        return expand_workspace_path(repo_root, value.strip())
+    return repo_root / ".github" / "workflow-core" / "runtime" / "scripts" / "vscode" / "copilot_cli_one_shot_reviewer.py"
+
+
+def expand_workspace_path(repo_root: Path, raw_value: str) -> Path:
+    expanded = raw_value.replace("${workspaceFolder}", str(repo_root))
+    return Path(os.path.expanduser(expanded)).resolve()
+
+
 def run_reviewer_cli_preflight(repo_root: Path) -> dict[str, Any]:
     command = resolve_reviewer_command(repo_root)
     allowed_commands = resolve_allowed_commands(repo_root)
     pinned_command_path = resolve_pinned_command_path(repo_root)
+    wrapper_path = resolve_wrapper_path(repo_root)
     command_path = shutil.which(command)
     command_available = command_path is not None
+    wrapper_exists = wrapper_path.exists()
     runtime_surface = detect_runtime_surface()
 
     command_allowed = command in allowed_commands
@@ -81,7 +96,7 @@ def run_reviewer_cli_preflight(repo_root: Path) -> dict[str, Any]:
         normalized_pinned_path = str(Path(pinned_command_path).resolve())
         pinned_path_matches = resolved_command_path == normalized_pinned_path
 
-    status = "ready" if command_available and command_allowed and pinned_path_matches else "failed"
+    status = "ready" if command_available and command_allowed and pinned_path_matches and wrapper_exists else "failed"
     warnings: list[str] = []
     if not command_available:
         warnings.append("reviewer_cli_command_missing")
@@ -89,6 +104,8 @@ def run_reviewer_cli_preflight(repo_root: Path) -> dict[str, Any]:
         warnings.append("reviewer_cli_command_not_allowlisted")
     if pinned_command_path and not pinned_path_matches:
         warnings.append("reviewer_cli_command_path_mismatch")
+    if not wrapper_exists:
+        warnings.append("reviewer_wrapper_missing")
 
     return {
         "status": status,
@@ -98,6 +115,8 @@ def run_reviewer_cli_preflight(repo_root: Path) -> dict[str, Any]:
         "command_available": command_available,
         "command_path": command_path,
         "resolved_command_path": resolved_command_path,
+        "wrapper_path": str(wrapper_path),
+        "wrapper_exists": wrapper_exists,
         "command_allowed": command_allowed,
         "pinned_command_path": normalized_pinned_path,
         "pinned_path_matches": pinned_path_matches,
