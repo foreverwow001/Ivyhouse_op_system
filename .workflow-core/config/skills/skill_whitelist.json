@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "approved_sources": [],
+  "approval_policy": {
+    "auto_approve_official_orgs": false,
+    "require_manual_approval_for_personal_repos": true,
+    "minimum_stars": 0,
+    "maximum_repo_age_months": 0
+  },
+  "last_updated": "2026-03-24T06:24:47+00:00"
+}

@@ -1,0 +1,43 @@
+﻿提案類型,現況名稱,建議SKU,編碼群組,編碼原則摘要,來源檔案,備註
+內包裝新增項,奶油-焦糖牛奶-單片,Q1001,Q_奶油單片,Q1-Q5 保留整包；奶油單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 Q1
+內包裝新增項,奶油-法國巧克力-單片,Q2001,Q_奶油單片,Q1-Q5 保留整包；奶油單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 Q2
+內包裝新增項,奶油-蜂蜜檸檬-單片,Q3001,Q_奶油單片,Q1-Q5 保留整包；奶油單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 Q3
+內包裝新增項,奶油-伯爵紅茶-單片,Q4001,Q_奶油單片,Q1-Q5 保留整包；奶油單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 Q4
+內包裝新增項,奶油-抹茶-單片,Q5001,Q_奶油單片,Q1-Q5 保留整包；奶油單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 Q5
+內包裝新增項,瓦片-原味-單片,C1001,C_瓦片單片,C1-C7 保留秤重母項；瓦片單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 C1
+內包裝新增項,瓦片-紅茶-單片,C2001,C_瓦片單片,C1-C7 保留秤重母項；瓦片單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 C2
+內包裝新增項,瓦片-巧克力-單片,C3001,C_瓦片單片,C1-C7 保留秤重母項；瓦片單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 C3
+內包裝新增項,瓦片-海苔-單片,C4001,C_瓦片單片,C1-C7 保留秤重母項；瓦片單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 C4
+內包裝新增項,瓦片-抹茶-單片,C5001,C_瓦片單片,C1-C7 保留秤重母項；瓦片單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 C5
+內包裝新增項,瓦片-黑糖-單片,C6001,C_瓦片單片,C1-C7 保留秤重母項；瓦片單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 C6
+內包裝新增項,瓦片-青花椒-單片,C7001,C_瓦片單片,C1-C7 保留秤重母項；瓦片單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 C7
+內包裝新增項,牛奶糖-100g,S1010,S_糖果分裝,S1-S2 保留秤重母項；100g 分裝包獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 S1
+內包裝新增項,南棗核桃糕-100g,S2010,S_糖果分裝,S1-S2 保留秤重母項；100g 分裝包獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 S2
+內包裝新增項,西點-巧克力貝殼-單片,G1001,G_西點單片,G1-G5 保留整包；西點單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 G1
+內包裝新增項,西點-咖啡小花-單片,G2001,G_西點單片,G1-G5 保留整包；西點單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 G2
+內包裝新增項,西點-藍莓小花-單片,G3001,G_西點單片,G1-G5 保留整包；西點單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 G3
+內包裝新增項,西點-蔓越莓貝殼-單片,G4001,G_西點單片,G1-G5 保留整包；西點單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 G4
+內包裝新增項,西點-乳酪酥條-單片,G5001,G_西點單片,G1-G5 保留整包；西點單片衍生項獨立編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,對應母項 G5
+內包裝新增項,咖啡-巴西席拉朵日曬-單包,K1001,K_咖啡單包,濾掛咖啡單包獨立編碼，不與現有內包裝家族混碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,委外單包完成品
+內包裝新增項,咖啡-日式藍山-單包,K2001,K_咖啡單包,濾掛咖啡單包獨立編碼，不與現有內包裝家族混碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,委外單包完成品
+內包裝新增項,咖啡-阿拉比卡-單包,K3001,K_咖啡單包,濾掛咖啡單包獨立編碼，不與現有內包裝家族混碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,委外單包完成品
+內包裝新增項,咖啡-黃金曼巴-單包,K4001,K_咖啡單包,濾掛咖啡單包獨立編碼，不與現有內包裝家族混碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_內包裝完成品主檔_template.csv,委外單包完成品
+外包裝材料,紙盒-禮盒,PK0001,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,紙盒-咖啡40,PK0002,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,紙盒-咖啡60,PK0003,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,鐵盒-禮盒,PK0004,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,大底板-紙盒-咖啡40,PK0005,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,大底板-紙盒-咖啡60,PK0006,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,大底板-紙盒-禮盒,PK0007,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,大底板-鐵盒-禮盒,PK0008,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,隔板-紙盒-咖啡40,PK0009,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,隔板-紙盒-咖啡60,PK0010,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,隔板-紙盒-禮盒,PK0011,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,隔板-鐵盒-禮盒,PK0012,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,提袋-鐵盒-禮盒,PK0013,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,手提夾鏈袋,PK0014,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,椰棗外夾鏈袋,PK0015,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,橫窗鋁箔夾鏈立袋,PK0016,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,糖果外夾鏈袋,PK0017,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,透明自黏袋,PK0018,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,
+外包裝材料,封套鐵盒-禮盒,PK0019,PK_外包裝材料,外包裝材料採統一流水號編碼,/workspaces/Ivyhouse_op_system/project_maintainers/chat/2026-03-25_外包裝材料主檔_template.csv,

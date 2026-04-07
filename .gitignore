@@ -1,0 +1,16 @@
+.local/obsidian-surface/
+.local/bootstrap-visible-vault/
+obsidian-vault
+node_modules/
+dist/
+apps/api/dist/
+.next/
+.env
+.venv/
+.service/
+.tmp-postgres-idx011/
+.tmp-postgres-inventory-smoke/
+**/__pycache__/
+*.pyc
+.agent/active_sessions.json
+.workflow-core/state/skills/audit.log

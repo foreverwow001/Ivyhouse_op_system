@@ -1,0 +1,162 @@
+{
+  "fixtures": [
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-1.pdf",
+      "expectedMappingCount": 8,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["瓦片-原味", "豆塔-蔓越莓"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-2.pdf",
+      "expectedMappingCount": 3,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["瓦片-抹茶", "西點-綜合"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-3.pdf",
+      "expectedMappingCount": 13,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["雙塔禮盒", "椰棗核桃150g"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-4.pdf",
+      "expectedMappingCount": 6,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["雙塔", "無調味綜合堅果"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-5.pdf",
+      "expectedMappingCount": 7,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["雪花餅-肉鬆", "瑪德蓮-蜂蜜"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-6.pdf",
+      "expectedMappingCount": 17,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["雪花餅-綜合", "雙塔禮盒"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-7.pdf",
+      "expectedMappingCount": 17,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["暖暖幸福禮盒", "堅果塔-蜂蜜"]
+    },
+    {
+      "channelCode": "OFFICIAL",
+      "fileName": "官網-撿貨單-1.xlsx",
+      "expectedMappingCount": 69,
+      "expectedUnmappedCount": 1,
+      "expectedReviewCount": 1,
+      "expectedMappedProducts": ["蔓越莓禮盒", "濾掛式咖啡"],
+      "expectedRuleCodes": ["IVY_GOVERNED_COFFEE_VISIBLE", "IVY_SELLABLE_COFFEE_DIRECT"],
+      "expectedMappedSkus": ["K00040"]
+    },
+    {
+      "channelCode": "OFFICIAL",
+      "fileName": "官網-撿貨單-2.xlsx",
+      "expectedMappingCount": 88,
+      "expectedUnmappedCount": 1,
+      "expectedReviewCount": 2,
+      "expectedMappedProducts": ["雪花餅-肉鬆", "提袋加購"],
+      "expectedRuleCodes": ["IVY_SELLABLE_BAG_DIRECT", "IVY_GOVERNED_COFFEE_VISIBLE"],
+      "expectedMappedSkus": ["O00001"]
+    },
+    {
+      "channelCode": "OFFICIAL",
+      "fileName": "官網-撿貨單-3.xlsx",
+      "expectedMappingCount": 95,
+      "expectedUnmappedCount": 1,
+      "expectedReviewCount": 2,
+      "expectedMappedProducts": ["雪花餅-肉鬆", "濾掛式咖啡"],
+      "expectedRuleCodes": ["IVY_SELLABLE_BAG_DIRECT", "IVY_GOVERNED_COFFEE_VISIBLE"],
+      "expectedMappedSkus": ["O00001"]
+    },
+    {
+      "channelCode": "SHOPEE",
+      "fileName": "蝦皮-撿貨單-1.pdf",
+      "expectedMappingCount": 28,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 1,
+      "expectedMappedProducts": ["★中東椰棗300g", "濾掛式咖啡"],
+      "expectedRuleCodes": ["IVY_GOVERNED_COFFEE_VISIBLE"]
+    },
+    {
+      "channelCode": "SHOPEE",
+      "fileName": "蝦皮-撿貨單-2.pdf",
+      "expectedMappingCount": 76,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 1,
+      "expectedMappedProducts": ["提袋加購", "雙塔禮盒"],
+      "expectedRuleCodes": ["IVY_SELLABLE_BAG_DIRECT", "IVY_GOVERNED_COFFEE_VISIBLE"],
+      "expectedMappedSkus": ["O00001"]
+    },
+    {
+      "channelCode": "SHOPEE",
+      "fileName": "蝦皮-撿貨單-3.pdf",
+      "expectedMappingCount": 80,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 2,
+      "expectedMappedProducts": ["南棗核桃糕", "濾掛式咖啡"],
+      "expectedRuleCodes": ["IVY_GOVERNED_COFFEE_VISIBLE"]
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0318到貨撿貨單.xls",
+      "expectedMappingCount": 18,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["瓦片-原味", "咖啡 - 綜合"],
+      "expectedRuleCodes": ["IVY_SELLABLE_COFFEE_DIRECT"],
+      "expectedMappedSkus": ["K00060"]
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0319到貨撿貨單.xls",
+      "expectedMappingCount": 40,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 1,
+      "expectedMappedProducts": ["瓦片-巧克力", "濾掛式咖啡"],
+      "expectedRuleCodes": ["IVY_GOVERNED_COFFEE_VISIBLE"]
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0320到貨撿貨單.xls",
+      "expectedMappingCount": 35,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["瓦片-原味", "豆塔-綜合"]
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0325到貨撿貨單.xls",
+      "expectedMappingCount": 234,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["瓦片-海苔", "豆塔-綜合"],
+      "expectedRuleCodes": ["IVY_SELLABLE_COFFEE_DIRECT"]
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0326到貨撿貨單.xls",
+      "expectedMappingCount": 4,
+      "expectedUnmappedCount": 0,
+      "expectedReviewCount": 0,
+      "expectedMappedProducts": ["瓦片-原味"]
+    }
+  ]
+}

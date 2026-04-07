@@ -1,0 +1,21 @@
+{
+  "name": "ivyhouse-op-system",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build:api": "npm run guard:maintainer-paths && npm run build --workspace @ivyhouse/api",
+    "build:portal": "npm run build --workspace @ivyhouse/portal",
+    "dev:portal": "npm run dev --workspace @ivyhouse/portal",
+    "guard:maintainer-paths": "node tools/check-maintainer-path-references.js",
+    "start:api": "npm run start --workspace @ivyhouse/api",
+    "start:portal": "npm run start --workspace @ivyhouse/portal",
+    "dev:api": "npm run start:dev --workspace @ivyhouse/api",
+    "prisma:generate": "npm run prisma:generate --workspace @ivyhouse/api",
+    "test:api:fixtures": "npm run guard:maintainer-paths && npm run test:fixtures --workspace @ivyhouse/api",
+    "test:api:mapping:fixtures": "npm run guard:maintainer-paths && npm run test:mapping:fixtures --workspace @ivyhouse/api",
+    "test:api:mapping:smoke": "npm run guard:maintainer-paths && npm run test:mapping:smoke --workspace @ivyhouse/api",
+    "test:api:smoke": "npm run guard:maintainer-paths && npm run test:smoke --workspace @ivyhouse/api"
+  }
+}

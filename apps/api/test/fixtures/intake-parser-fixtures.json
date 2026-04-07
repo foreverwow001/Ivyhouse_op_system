@@ -1,0 +1,148 @@
+{
+  "fixtures": [
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-1.pdf",
+      "expectedCount": 8,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["經典杏仁瓦片-原味", "夏威夷豆塔-10入/袋裝3包-共30入"],
+      "expectedWarningCodes": ["MOMO_MERGED_QUANTITY_SPEC"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-2.pdf",
+      "expectedCount": 3,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["經典杏仁瓦片-抹茶口味", "經典杏仁瓦片-紅茶口味"],
+      "expectedWarningCodes": ["MOMO_MERGED_QUANTITY_SPEC"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-3.pdf",
+      "expectedCount": 13,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["活動專用", "咖啡小花曲奇餅乾", "艾薇招牌雙塔禮盒"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-4.pdf",
+      "expectedCount": 6,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["招牌雙塔組合", "無調味堅果-原味綜合", "夏威夷豆塔-蜂蜜蔓越莓口味"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-5.pdf",
+      "expectedCount": 7,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["經典杏仁瓦片-原味", "雪花餅-肉鬆口味", "夏威夷豆塔-10入/袋裝 (單包 & 3包組)"],
+      "expectedWarningCodes": ["MOMO_MERGED_QUANTITY_SPEC"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-6.pdf",
+      "expectedCount": 17,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["浪漫詩篇禮盒", "活動專用", "夏威夷豆塔-10入/袋裝3包-共30入"]
+    },
+    {
+      "channelCode": "MOMO",
+      "fileName": "momo-撿貨單-7.pdf",
+      "expectedCount": 17,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["伯爵紅茶", "暖暖幸福禮盒", "青花椒口味"]
+    },
+    {
+      "channelCode": "OFFICIAL",
+      "fileName": "官網-撿貨單-1.xlsx",
+      "expectedCount": 69,
+      "expectedExceptionCount": 0,
+      "expectedHeaderRow": 7,
+      "expectedProducts": ["夏威夷豆塔禮盒-蜂蜜蔓越莓口味 15入", "招牌雙塔組合", "法式千層奶香小酥條"]
+    },
+    {
+      "channelCode": "OFFICIAL",
+      "fileName": "官網-撿貨單-2.xlsx",
+      "expectedCount": 88,
+      "expectedExceptionCount": 0,
+      "expectedHeaderRow": 7,
+      "expectedProducts": ["雪花餅-肉鬆口味", "夏威夷豆塔禮盒-蜂蜜蔓越莓口味", "濾掛式咖啡"]
+    },
+    {
+      "channelCode": "OFFICIAL",
+      "fileName": "官網-撿貨單-3.xlsx",
+      "expectedCount": 95,
+      "expectedExceptionCount": 0,
+      "expectedHeaderRow": 7,
+      "expectedProducts": ["雪花餅-肉鬆口味", "招牌雙塔組合", "濾掛式咖啡"]
+    },
+    {
+      "channelCode": "SHOPEE",
+      "fileName": "蝦皮-撿貨單-1.pdf",
+      "expectedCount": 28,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["無調味堅果-原味核桃", "經典杏仁瓦片-原味", "雪花餅-蔓越莓口味"]
+    },
+    {
+      "channelCode": "SHOPEE",
+      "fileName": "蝦皮-撿貨單-2.pdf",
+      "expectedCount": 76,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["提袋加購 1只", "艾薇招牌雙塔禮盒", "千層奶香小酥條", "堅果塔-咖哩口味"],
+      "expectedWarningCodes": ["SHOPEE_INLINE_QUANTITY_COLLAPSED", "SHOPEE_MERGED_QUANTITY_SPEC"]
+    },
+    {
+      "channelCode": "SHOPEE",
+      "fileName": "蝦皮-撿貨單-3.pdf",
+      "expectedCount": 80,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["濾掛式咖啡", "單顆", "堅果塔-巧克力口味", "雪花餅-金沙口味"],
+      "expectedWarningCodes": ["SHOPEE_MERGED_QUANTITY_SPEC"]
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0318到貨撿貨單.xls",
+      "expectedCount": 18,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["艾薇-杏仁瓦片90g [原味]", "艾薇-杏仁瓦片135g [原味]", "贈品:滿額贈"],
+      "expectedGiftCount": 6,
+      "expectedTrialCount": 0
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0319到貨撿貨單.xls",
+      "expectedCount": 40,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["艾薇-杏仁瓦片135g [巧克力]", "艾薇-杏仁瓦片135g [抹茶]", "贈品:滿額贈"],
+      "expectedGiftCount": 8,
+      "expectedTrialCount": 0
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0320到貨撿貨單.xls",
+      "expectedCount": 35,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["艾薇-杏仁瓦片90g [原味]", "艾薇-杏仁瓦片135g [原味]", "贈品:滿額贈"],
+      "expectedGiftCount": 6,
+      "expectedTrialCount": 0
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0325到貨撿貨單.xls",
+      "expectedCount": 234,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["艾薇-杏仁瓦片90g [海苔]", "艾薇-杏仁瓦片(原味)135g", "艾薇-杏仁瓦片(巧克力)90g", "贈品:滿額贈"],
+      "expectedGiftCount": 8,
+      "expectedTrialCount": 196
+    },
+    {
+      "channelCode": "ORANGEPOINT",
+      "fileName": "橘點子-0326到貨撿貨單.xls",
+      "expectedCount": 4,
+      "expectedExceptionCount": 0,
+      "expectedProducts": ["艾薇-杏仁瓦片(原味)135g", "艾薇-杏仁瓦片(巧克力)90g"],
+      "expectedGiftCount": 0,
+      "expectedTrialCount": 4
+    }
+  ]
+}

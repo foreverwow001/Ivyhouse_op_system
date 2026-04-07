@@ -1,0 +1,241 @@
+# Agent Workflow Template - 發佈準備
+
+## 📦 需要打包的內容
+
+### 1. 核心檔案
+
+```
+agent-workflow-template/
+├── .github/
+│   ├── prompts/
+│   │   └── dev.prompt.md
+│   ├── agents/
+│   └── workflow-core/
+│       ├── workflow_baseline_rules.md (template repo self-maintenance only)
+│       ├── AGENT_ENTRY.md
+│       ├── workflows/
+│       │   └── dev.md
+│       ├── roles/
+│       │   ├── planner.md
+│       │   ├── engineer.md
+│       │   ├── qa.md
+│       │   └── domain_expert.md (template)
+│       ├── skills/
+│       │   ├── code-reviewer/
+│       │   ├── doc-generator/
+│       │   ├── test-runner/
+│       │   ├── plan-validator/
+│       │   ├── git-stats-reporter/
+│       │   ├── skills-evaluator/
+│       │   ├── github-explorer/
+│       │   ├── skill-converter/
+│       │   ├── manifest-updater/
+│       │   ├── _shared/
+│       │   ├── explore-cli-tool/
+│       │   │   └── SKILL.md
+│       │   └── schemas/
+│       ├── scripts/
+│       │   ├── run_codex_template.sh ⭐
+│       │   └── setup_workflow.sh
+│       ├── runtime/
+│       │   └── scripts/
+│       └── templates/
+│           └── handoff_template.md
+├── .workflow-core/
+│   └── state/ (runtime state; tokens/log)
+├── doc/
+│   ├── plans/
+│   │   └── Idx-000_plan.template.md
+│   ├── logs/
+│   │   └── Idx-000_log.template.md
+│   └── implementation_plan_index.md (template)
+├── .devcontainer/
+│   └── devcontainer.json (optional, 範例)
+├── project_rules.md (downstream starter template)
+├── README.md
+└── LICENSE
+```
+
+> 釋出時需明確說明：template repo 維護使用 `.github/workflow-core/workflow_baseline_rules.md`，下游專案落地後改用根目錄 `project_rules.md`。
+
+### 2. 新增的核心功能 ⭐
+
+#### VS Code 內建終端協作（Coordinator）
+- **目的**：以 GitHub Copilot Chat 作為 Coordinator，透過 root `.github` surface 與 `.github/workflow-core/**` canonical commands 管理 workflow handoff / monitor。
+- **限制**：不把 legacy sendText / bash 腳本 / PTY fallback 當成 workflow 主路徑；正式執行路徑是 chat-primary + one-shot reviewers。
+
+#### 自動化執行腳本
+- `run_codex_template.sh`：批次執行 Codex CLI（JSONL 審計）
+
+### 3. 文件需求
+
+#### README.md（主文件）
+```markdown
+# Agent Workflow Template
+
+多代理協作開發工作流程模板，整合 GitHub Copilot 與 Codex CLI。
+
+## 特色
+
+- ✅ 多代理角色定義（Planner / Engineer / QA / Expert）
+- ✅ 自動化執行流程（Codex CLI 整合）
+- ✅ Cross-QA 規則
+- ✅ JSONL 審計記錄
+- ✅ L2 自動回滾
+
+## 快速開始
+
+### 方式 1：用 core/overlay bootstrap downstream repo（推薦）
+
+1. 建立或準備下游 repo
+2. 依 `.github/workflow-core/docs/downstream/PORTABLE_WORKFLOW.md` 導入 curated workflow core
+3. 執行初始化：
+   ```bash
+   ./.github/workflow-core/scripts/setup_workflow.sh .
+   ```
+
+### 方式 2：手動複製 bootstrap surface
+
+```bash
+git clone https://github.com/YOUR_ORG/agent-workflow-template.git
+cd agent-workflow-template
+./.github/workflow-core/scripts/setup_workflow.sh /path/to/your-project
+```
+
+## 使用指南
+
+### 1. 配置專案
+
+編輯 `project_rules.md` 填入專案資訊。
+
+### 2. 啟動 Dev Team
+
+在 VS Code 中：
+
+```
+/dev
+```
+
+### 3. Codex CLI 自動化
+
+```bash
+# 批次執行（同步，立即回傳結果）
+.github/workflow-core/scripts/run_codex_template.sh doc/plans/Idx-XXX_plan.md
+```
+
+## 文件
+
+- [Dev Workflow](./workflows/dev.md)
+- [Agent Entry](./workflows/AGENT_ENTRY.md)
+
+## 需求
+
+- VS Code 1.95+
+- GitHub Copilot (建議)
+- Codex CLI 0.80+ (選用)
+- Dev Container (選用)
+```
+
+#### CONTRIBUTING.md
+```markdown
+# Contributing
+
+## 如何貢獻
+
+1. Fork this repo
+2. Create feature branch
+3. 測試變更
+4. Submit PR
+
+## 測試
+
+```bash
+# 測試 setup script
+./test_setup.sh
+```
+
+## 版本發佈
+
+1. 更新 CHANGELOG.md
+2. 更新版本號
+3. 建立 Git tag
+```
+
+### 4. Repository 發佈設定
+
+在 GitHub repo settings：
+
+1. 添加 Topics:
+   - `agent-workflow`
+   - `github-copilot`
+   - `codex-cli`
+   - `vscode-extension`
+   - `dev-container`
+
+> 不再建議把這個 repo 當成 downstream 的 GitHub template 入口；正式推薦方式是 curated core + overlay bootstrap，後續再接 `workflow-core` sync lane。
+
+### 5. 授權
+
+- 建議使用 MIT License
+- 如有拆出獨立工具/套件，請提供獨立 LICENSE
+
+---
+
+## 🚀 發佈步驟
+
+### 階段 1：本地整理
+
+1. [ ] 建立新 repo `agent-workflow-template`
+2. [ ] 複製核心檔案（參考上方結構）
+3. [ ] 測試 setup_workflow.sh
+4. [ ] 撰寫 README.md
+5. [ ] 添加範例 `.devcontainer/devcontainer.json`
+
+### 階段 2：GitHub 發佈
+
+1. [ ] Push 到 GitHub
+2. [ ] 添加 Topics
+3. [ ] 建立 Release（v1.0.0）
+4. [ ] 撰寫 Release Notes
+5. [ ] 明確標示 downstream 官方路徑為 core/overlay bootstrap + sync
+
+### 階段 3：測試驗證
+
+1. [ ] 用 portable/bootstrap flow 建立測試 downstream repo
+2. [ ] 執行完整流程（Plan → Execute → QA）
+3. [ ] 驗證後續 `workflow-core sync` 更新路徑
+4. [ ] 收集反饋改進
+
+---
+
+## 📝 建議的 Repo 說明
+
+**簡短描述：**
+```
+Multi-agent development workflow template with GitHub Copilot & Codex CLI integration
+```
+
+**完整描述：**
+```
+A production-ready template for multi-agent collaborative development workflows.
+Features automated execution and Cross-QA rules for collaborative workflows.
+
+✅ Planner / Engineer / QA / Expert roles
+✅ Codex CLI automation with monitoring
+✅ JSONL audit logging
+✅ L2 auto-rollback
+```
+
+---
+
+## 🎯 未來改進
+
+1. **CI/CD 整合**：自動測試 setup script
+2. **多語言支援**：英文版文件
+3. **視覺化工具**：Dashboard 顯示執行狀態
+4. **Plugin 系統**：支援自訂技能擴充
+
+---
+
+**建立日期**: 2026-01-13
+**維護者**: @foreverjojo

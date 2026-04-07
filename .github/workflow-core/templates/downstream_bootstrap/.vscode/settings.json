@@ -1,0 +1,9 @@
+{
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python",
+  "python.terminal.activateEnvironment": false,
+  "ivyhouseWorkflow.defaultMode": "chat-primary-with-one-shot-reviewers",
+  "ivyhouseReviewerCli.command": "copilot",
+  "ivyhouseReviewerCli.terminalName": "Copilot Review",
+  "ivyhouseReviewerCli.requireFreshSession": true
+}

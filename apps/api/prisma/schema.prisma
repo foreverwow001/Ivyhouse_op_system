@@ -1,0 +1,648 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IntakeTarget {
+  FORMAL_DEMAND
+  PEAK_PLANNING
+}
+
+enum FileStatus {
+  UPLOADED
+  PARSING
+  PARSED
+  PARSE_FAILED
+  ARCHIVED
+}
+
+enum BatchStatus {
+  DRAFT
+  PARSING
+  PENDING_MAPPING
+  PENDING_REVIEW
+  EXCEPTION_IN_PROGRESS
+  CONFIRMED
+  VOIDED
+}
+
+enum ParseKind {
+  STANDARD
+  GIFT
+  TRIAL_SNACK
+  MANUAL
+  UNKNOWN
+}
+
+enum ConfidenceLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ParsedLineStatus {
+  EXTRACTED
+  PENDING_MANUAL_CONFIRMATION
+  PENDING_MAPPING
+  REJECTED
+}
+
+enum MappingMethod {
+  RULE_MATCH
+  MANUAL_ASSIGNMENT
+  BATCH_ACCEPTANCE
+  UNMAPPED
+}
+
+enum MappingResultStatus {
+  PENDING_MAPPING
+  MAPPED
+  PENDING_MANUAL_REVIEW
+  UNMAPPED
+  ACCEPTED
+  EXCEPTION_ESCALATED
+}
+
+enum ExceptionType {
+  CHANNEL_IDENTIFICATION_FAILED
+  PARSE_FAILED
+  LOW_CONFIDENCE_PARSE
+  UNMAPPED
+  RULE_CONFLICT
+  NEW_GRAMMAR_REQUIRED
+}
+
+enum SuggestedAction {
+  BATCH_ACCEPTANCE
+  CREATE_MAPPING_RULE_PROPOSAL
+  CREATE_NEW_PRODUCT_PROPOSAL
+  ENGINEERING_HANDOFF
+}
+
+enum ExceptionStatus {
+  PENDING
+  MANUAL_PROCESSING
+  BATCH_ACCEPTED
+  RULE_PROPOSAL_CREATED
+  NEW_PRODUCT_PROPOSAL_CREATED
+  ENGINEERING_ESCALATED
+  CLOSED
+}
+
+enum ResolutionType {
+  ACCEPT_FOR_BATCH
+  REJECT_FOR_BATCH
+  ASSIGN_SKU
+}
+
+enum ProposalStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  PUBLISHED
+}
+
+enum DailyDemandSourceType {
+  ORDER_IMPORT
+  MANUAL_ENTRY
+}
+
+enum DailyDemandBatchStatus {
+  DRAFT
+  CONFIRMED
+  VOIDED
+}
+
+enum InventoryBucketType {
+  SELLABLE
+  INNER_PACK_FINISHED
+  PACKAGING_MATERIAL
+  SHIPPING_SUPPLY_MANUAL
+}
+
+enum InventoryItemType {
+  SELLABLE_PRODUCT
+  INNER_PACK_PRODUCT
+  MATERIAL
+}
+
+enum InventoryDeductionRunStatus {
+  PENDING
+  EXECUTED
+  PARTIALLY_EXECUTED
+  VOIDED
+}
+
+enum ProductionPlanStatus {
+  DRAFT
+  CONFIRMED
+  REVISED
+  VOIDED
+}
+
+enum ProductionPlanLevel {
+  SELLABLE
+  INNER_PACK
+}
+
+enum BomTriggerType {
+  PLAN_CREATED
+  PLAN_REVISED
+  MANUAL_RERUN
+}
+
+enum ReplenishmentRunStatus {
+  DRAFT
+  COMMITTED
+  VOIDED
+}
+
+enum InventoryCountScope {
+  DAILY_OPS
+  PACKAGING_MATERIAL
+  SHIPPING_SUPPLY
+  FULL_WAREHOUSE
+}
+
+enum InventoryCountSessionStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ApprovalStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+}
+
+enum InventoryAdjustmentSourceType {
+  COUNT_SESSION
+  MANUAL
+  REPLENISHMENT
+}
+
+enum InventoryEventType {
+  DEDUCTION
+  DEDUCTION_FALLBACK
+  BOM_RESERVATION
+  BOM_REVERSAL
+  REPLENISHMENT
+  COUNT_ADJUSTMENT
+  MANUAL_ADJUSTMENT
+}
+
+model IntakeBatch {
+  id                 String            @id @default(uuid())
+  intakeTarget       IntakeTarget
+  primaryChannelCode String?
+  batchDate          DateTime
+  planningWindowId   String?
+  defaultDemandDate  DateTime?
+  sourceFileCount    Int               @default(0)
+  parsedLineCount    Int               @default(0)
+  unmappedCount      Int               @default(0)
+  pendingReviewCount Int               @default(0)
+  confirmedAt        DateTime?
+  confirmedBy        String?
+  status             BatchStatus
+  createdAt          DateTime          @default(now())
+  createdBy          String
+  updatedAt          DateTime          @updatedAt
+  updatedBy          String
+  sourceFiles        SourceFile[]
+  parsedLines        ParsedLine[]
+  exceptions         IntakeException[]
+
+  @@index([batchDate])
+  @@index([status])
+}
+
+model SourceFile {
+  id                String      @id @default(uuid())
+  intakeBatchId     String
+  originalFileName  String
+  fileExtension     String
+  mimeType          String
+  fileHash          String
+  fileSizeBytes     Int
+  channelCode       String
+  intakeTarget      IntakeTarget
+  storagePath       String
+  parserProfile     String?
+  parseErrorMessage String?
+  status            FileStatus
+  uploadedAt        DateTime    @default(now())
+  uploadedBy        String
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  intakeBatch       IntakeBatch @relation(fields: [intakeBatchId], references: [id], onDelete: Cascade)
+  parsedLines       ParsedLine[]
+  exceptions        IntakeException[]
+
+  @@index([intakeBatchId])
+  @@index([channelCode])
+}
+
+model ParsedLine {
+  id                 String            @id @default(uuid())
+  intakeBatchId      String
+  sourceFileId       String?
+  channelCode        String
+  sourceRowRef       String
+  rawProductText     String
+  rawSpecText        String?
+  rawQuantity        Int
+  parseKind          ParseKind
+  parseConfidence    ConfidenceLevel
+  parserWarningCode  String?
+  parserMeta         Json?
+  status             ParsedLineStatus
+  createdAt          DateTime          @default(now())
+  createdBy          String
+  intakeBatch        IntakeBatch       @relation(fields: [intakeBatchId], references: [id], onDelete: Cascade)
+  sourceFile         SourceFile?       @relation(fields: [sourceFileId], references: [id], onDelete: SetNull)
+  mappingResults     MappingResult[]
+  exceptions         IntakeException[]
+
+  @@index([intakeBatchId])
+  @@index([sourceFileId])
+  @@index([status])
+}
+
+model MappingResult {
+  id                 String              @id @default(uuid())
+  parsedLineId       String
+  sellableProductSku String?
+  bundleProductSku   String?
+  mappingRuleCode    String?
+  mappingMethod      MappingMethod
+  mappingConfidence  ConfidenceLevel
+  isHumanReviewed    Boolean             @default(false)
+  reviewedBy         String?
+  reviewedAt         DateTime?
+  requiresExplosion  Boolean             @default(false)
+  status             MappingResultStatus
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  parsedLine         ParsedLine          @relation(fields: [parsedLineId], references: [id], onDelete: Cascade)
+  exceptions         IntakeException[]
+
+  @@index([parsedLineId])
+  @@index([status])
+}
+
+model IntakeException {
+  id               String           @id @default(uuid())
+  intakeBatchId    String
+  sourceFileId     String?
+  parsedLineId     String?
+  mappingResultId  String?
+  exceptionType    ExceptionType
+  sourceRowRef     String?
+  rawProductText   String?
+  rawSpecText      String?
+  rawQuantity      Int?
+  errorMessage     String?
+  suggestedAction  SuggestedAction
+  status           ExceptionStatus
+  createdAt        DateTime         @default(now())
+  createdBy        String
+  intakeBatch      IntakeBatch      @relation(fields: [intakeBatchId], references: [id], onDelete: Cascade)
+  sourceFile       SourceFile?      @relation(fields: [sourceFileId], references: [id], onDelete: SetNull)
+  parsedLine       ParsedLine?      @relation(fields: [parsedLineId], references: [id], onDelete: SetNull)
+  mappingResult    MappingResult?   @relation(fields: [mappingResultId], references: [id], onDelete: SetNull)
+  batchResolutions BatchResolution[]
+
+  @@index([intakeBatchId])
+  @@index([status])
+}
+
+model BatchResolution {
+  id                       String          @id @default(uuid())
+  intakeExceptionId        String
+  resolutionType           ResolutionType
+  resolvedSellableProductSku String?
+  resolvedQuantity         Int?
+  resolutionReason         String?
+  shouldPromote            Boolean         @default(false)
+  resolvedBy               String
+  resolvedAt               DateTime
+  intakeException          IntakeException @relation(fields: [intakeExceptionId], references: [id], onDelete: Cascade)
+
+  @@index([intakeExceptionId])
+}
+
+model MappingRuleProposal {
+  id                       String         @id @default(uuid())
+  sourceExceptionId        String?
+  channelCode              String
+  rawProductPattern        String
+  rawSpecPattern           String?
+  proposedSellableProductSku String
+  proposalReason           String?
+  status                   ProposalStatus
+  proposedBy               String
+  proposedAt               DateTime       @default(now())
+  reviewedBy               String?
+  reviewedAt               DateTime?
+
+  @@index([channelCode])
+  @@index([status])
+}
+
+model NewProductProposal {
+  id                  String         @id @default(uuid())
+  sourceExceptionId   String?
+  proposedProductName String
+  proposedProductType String
+  proposedSpecSummary String?
+  isBundleProduct     Boolean        @default(false)
+  proposedChannelScope Json?
+  status              ProposalStatus
+  proposedBy          String
+  proposedAt          DateTime       @default(now())
+  reviewedBy          String?
+  reviewedAt          DateTime?
+
+  @@index([status])
+}
+
+model DailyDemandBatch {
+  id            String                  @id @default(cuid())
+  batchNo       String                  @unique
+  businessDate  DateTime
+  sourceType    DailyDemandSourceType
+  status        DailyDemandBatchStatus
+  importedAt    DateTime
+  importedBy    String
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  lines         DailyDemandLine[]
+  deductionRuns InventoryDeductionRun[]
+
+  @@index([businessDate])
+  @@index([status])
+}
+
+model DailyDemandLine {
+  id            String           @id @default(cuid())
+  batchId       String
+  channelCode   String
+  sellableSku   String
+  sellableName  String
+  spec          String?
+  quantity      Decimal
+  shipDate      DateTime?
+  rawSourceRef  String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  batch         DailyDemandBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([sellableSku])
+}
+
+model InventoryDeductionRun {
+  id            String                      @id @default(cuid())
+  batchId       String
+  status        InventoryDeductionRunStatus
+  warningCount  Int                         @default(0)
+  executedAt    DateTime
+  executedBy    String
+  createdAt     DateTime                    @default(now())
+  lines         InventoryDeductionLine[]
+  batch         DailyDemandBatch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([status])
+}
+
+model InventoryDeductionLine {
+  id                 String                 @id @default(cuid())
+  runId              String
+  bucketType         InventoryBucketType
+  itemType           InventoryItemType
+  itemSku            String
+  quantity           Decimal
+  fallbackFromBucket InventoryBucketType?
+  warningCode        String?
+  createdAt          DateTime               @default(now())
+  run                InventoryDeductionRun  @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@index([itemSku])
+}
+
+model ProductionPlanHeader {
+  id                   String                 @id @default(cuid())
+  planDate             DateTime
+  status               ProductionPlanStatus
+  createdBy            String
+  createdBySessionId   String?
+  createdByAuthSource  String?
+  approvalStatus       ApprovalStatus         @default(PENDING_APPROVAL)
+  approverPrincipalId  String?
+  approvalDecidedAt    DateTime?
+  approvalNote         String?
+  singlePersonOverride Boolean                @default(false)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  revisedFromId        String?
+  revisedFrom          ProductionPlanHeader?  @relation("ProductionPlanRevision", fields: [revisedFromId], references: [id], onDelete: SetNull)
+  revisions            ProductionPlanHeader[] @relation("ProductionPlanRevision")
+  lines                ProductionPlanLine[]
+  bomRuns              BomReservationRun[]
+
+  @@index([planDate])
+  @@index([status])
+  @@index([approvalStatus])
+}
+
+model ProductionPlanLine {
+  id             String               @id @default(cuid())
+  planId         String
+  planLevel      ProductionPlanLevel
+  targetSku      String
+  targetName     String
+  plannedQty     Decimal
+  uom            String
+  createdAt      DateTime             @default(now())
+  plan           ProductionPlanHeader @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([planId])
+  @@index([targetSku])
+}
+
+model BomReservationRun {
+  id                   String              @id @default(cuid())
+  planId               String
+  triggerType          BomTriggerType
+  requestedByPrincipalId String?
+  requestedBySessionId String?
+  requestedByAuthSource String?
+  approvalStatus       ApprovalStatus      @default(PENDING_APPROVAL)
+  approverPrincipalId  String?
+  approvalDecidedAt    DateTime?
+  approvalNote         String?
+  singlePersonOverride Boolean             @default(false)
+  executedAt           DateTime?
+  executedBy           String?
+  reversedRunId        String?
+  reversedRun          BomReservationRun?  @relation("BomReservationReversal", fields: [reversedRunId], references: [id], onDelete: SetNull)
+  reversalChildren     BomReservationRun[] @relation("BomReservationReversal")
+  createdAt            DateTime            @default(now())
+  lines                BomReservationLine[]
+  plan                 ProductionPlanHeader @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([planId])
+  @@index([triggerType])
+  @@index([approvalStatus])
+}
+
+model BomReservationLine {
+  id             String            @id @default(cuid())
+  runId          String
+  materialType   InventoryItemType
+  materialSku    String
+  materialName   String
+  qtyDelta       Decimal
+  uom            String
+  createdAt      DateTime          @default(now())
+  run            BomReservationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@index([materialSku])
+}
+
+model ReplenishmentRun {
+  id            String                 @id @default(cuid())
+  businessDate  DateTime
+  status        ReplenishmentRunStatus
+  performedBy   String
+  performedAt   DateTime
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  lines         ReplenishmentLine[]
+
+  @@index([businessDate])
+  @@index([status])
+}
+
+model ReplenishmentLine {
+  id            String              @id @default(cuid())
+  runId         String
+  bucketType    InventoryBucketType
+  itemSku       String
+  itemName      String
+  quantity      Decimal
+  uom           String
+  createdAt     DateTime            @default(now())
+  run           ReplenishmentRun    @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@index([itemSku])
+}
+
+model InventoryCountSession {
+  id                            String                      @id @default(cuid())
+  countScope                    InventoryCountScope
+  status                        InventoryCountSessionStatus
+  performedBy                   String
+  startedBySessionId            String?
+  startedByAuthSource           String?
+  startedAt                     DateTime
+  cancelledAt                   DateTime?
+  cancelledByPrincipalId        String?
+  cancelReason                  String?
+  completedAt                   DateTime?
+  completedByPrincipalId        String?
+  completionApprovalStatus      ApprovalStatus?
+  completionApproverPrincipalId String?
+  completionApprovedAt          DateTime?
+  completionSinglePersonOverride Boolean                     @default(false)
+  createdAt                     DateTime                    @default(now())
+  updatedAt                     DateTime                    @updatedAt
+  lines                         InventoryCountLine[]
+  adjustments                   InventoryAdjustmentEvent[]
+
+  @@index([countScope])
+  @@index([status])
+}
+
+model InventoryCountLine {
+  id            String                @id @default(cuid())
+  sessionId     String
+  bucketType    InventoryBucketType
+  itemSku       String
+  beforeQty     Decimal
+  countedQty    Decimal
+  variancePct   Decimal?
+  note          String?
+  createdAt     DateTime              @default(now())
+  session       InventoryCountSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([itemSku])
+}
+
+model InventoryAdjustmentEvent {
+  id                  String                        @id @default(cuid())
+  sourceType          InventoryAdjustmentSourceType
+  sourceSessionId     String?
+  bucketType          InventoryBucketType
+  itemSku             String
+  qtyDelta            Decimal
+  reason              String?
+  performedBy         String
+  performedBySessionId String?
+  performedByAuthSource String?
+  approvalStatus      ApprovalStatus?
+  approverPrincipalId String?
+  approvedAt          DateTime?
+  singlePersonOverride Boolean                      @default(false)
+  performedAt         DateTime
+  createdAt           DateTime                      @default(now())
+  sourceSession       InventoryCountSession?        @relation(fields: [sourceSessionId], references: [id], onDelete: SetNull)
+
+  @@index([sourceType])
+  @@index([itemSku])
+}
+
+model InventoryEventLedger {
+  id            String             @id @default(cuid())
+  eventType     InventoryEventType
+  bucketType    InventoryBucketType
+  itemSku       String
+  qtyDelta      Decimal
+  sourceType    String
+  sourceId      String
+  performedBy   String
+  performedAt   DateTime
+  createdAt     DateTime           @default(now())
+
+  @@index([eventType])
+  @@index([itemSku])
+  @@index([sourceType, sourceId])
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  action       String
+  entityType   String
+  entityId     String
+  performedBy  String
+  performedAt  DateTime
+  payload      Json?
+  createdAt    DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([performedBy])
+  @@index([performedAt])
+}
