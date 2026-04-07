@@ -119,7 +119,7 @@ apps/api/test/fixtures/intake-source-documents/
 
 ### 4. Repo Guard
 
-- `guard:maintainer-paths`：硬性禁止 code / docs 引用舊的 `project_maintainers/chat/sample/` 與已搬遷 CSV 路徑
+- `guard:maintainer-paths`：硬性禁止 code / docs 引用已退役的 sample 與已搬遷 CSV 路徑；sample 正式落點為 `apps/api/test/fixtures/intake-source-documents/`
 - 白名單：guard 腳本自身 + 治理文件（`maintainer_data_surface_governance.md`）
 - 已串接到 `build:api` 與所有 `test:api:*` script
 

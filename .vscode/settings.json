@@ -5,6 +5,10 @@
   "remote.autoForwardPortsSource": "hybrid",
   "ivyhouseWorkflow.defaultMode": "chat-primary-with-one-shot-reviewers",
   "ivyhouseReviewerCli.command": "copilot",
+  "ivyhouseReviewerCli.allowedCommands": [
+    "copilot"
+  ],
+  "ivyhouseReviewerCli.pinnedCommandPath": "/home/vscode/.vscode-server-insiders/data/User/globalStorage/github.copilot-chat/copilotCli/copilot",
   "ivyhouseReviewerCli.terminalName": "Copilot Review",
   "ivyhouseReviewerCli.requireFreshSession": true,
   "ivyhouseTerminalPty.autoStartCodex": true,

@@ -28,7 +28,7 @@
 若 downstream 只想記一個同步入口，現在優先使用：
 
 ```bash
-python .agent/runtime/scripts/workflow_core_sync_update.py \
+python .github/workflow-core/runtime/scripts/workflow_core_sync_update.py \
 	--repo-root . \
 	--release-ref <release-ref> \
 	--source-remote workflow-core-upstream \
@@ -40,14 +40,14 @@ python .agent/runtime/scripts/workflow_core_sync_update.py \
 目前 core 已內建 generator artifact，可在 downstream repo 執行：
 
 ```bash
-python .agent/runtime/scripts/workflow_core_obsidian_restricted_mount.py --repo-root .
+python .github/workflow-core/runtime/scripts/workflow_core_obsidian_restricted_mount.py --repo-root .
 ```
 
 若你只需要單獨產生 Obsidian restricted access sample，而不是跑完整個 one-click sync lane，也可改用以下入口：
 
 ```bash
-python .agent/runtime/scripts/workflow_core_projection.py --repo-root . --bootstrap-overlay-index --setup-obsidian-restricted-access
-python .agent/runtime/scripts/workflow_core_sync_apply.py --repo-root . --release-ref <release-ref> --setup-obsidian-restricted-access
+python .github/workflow-core/runtime/scripts/workflow_core_projection.py --repo-root . --bootstrap-overlay-index --setup-obsidian-restricted-access
+python .github/workflow-core/runtime/scripts/workflow_core_sync_apply.py --repo-root . --release-ref <release-ref> --setup-obsidian-restricted-access
 ```
 
 若你需要自訂輸出目錄或強制覆蓋既有 sample，仍可搭配低階參數 `--obsidian-mount-output-dir` 與 `--force-obsidian-mount-sample`。
