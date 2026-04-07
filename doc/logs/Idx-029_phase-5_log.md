@@ -32,23 +32,24 @@
 | security_reviewer_tool | Ivy Security Reviewer |
 | qa_tool | Ivy QA Reviewer |
 | last_change_tool | GitHub Copilot |
-| qa_result | PASS_WITH_RISK |
-| security_result | PASS_WITH_RISK |
-| final_signoff | PASS_WITH_RISK |
-| commit_hash | pending |
+| qa_result | PASS |
+| security_result | PASS |
+| final_signoff | PASS |
+| commit_hash | `486d79e97d0b95f2db845e0151a8299b3ae65344` |
 
 ## 🛠️ VERIFICATION_REPORT
 
 | Area | Status | Summary | Timestamp |
 |------|--------|---------|-----------|
 | portable smoke | pass | canonical portable smoke 通過，manifest 宣告、AGENT_ENTRY 與 required live paths 均存在 | 2026-04-07 |
-| reviewer preflight | ready | `copilot` reviewer CLI 可用，runtime surface = `canonical` | 2026-04-07 |
+| reviewer preflight | ready | `copilot` reviewer CLI 可用，allowlist 與 pinned path hardening 均已通過 | 2026-04-07 |
 | downstream workflow smoke | pass | `/dev` prompt、QA/Security reviewer surface、legacy `.agent` shim 與 local skills catalog 皆指向新 authority | 2026-04-07 |
 | build:portal | pass | `next build` 完成，靜態 routes 與 type check 通過 | 2026-04-07 |
 | build:api (direct) | pass | `tsc -p tsconfig.json` 通過，API 自身未受 cutover 影響 | 2026-04-07 |
-| guard:maintainer-paths | fail | root guard 命中既有 maintainer handoff 文件的禁用 path reference，影響 root `build:api` wrapper | 2026-04-07 |
-| sync precheck | constrained | 因 workspace 缺少 `.git` metadata，`workflow_core_sync_precheck.py` 無法執行 | 2026-04-07 |
-| sync verify | constrained | 因 workspace 缺少 `.git` metadata，`workflow_core_sync_verify.py` 無法執行 | 2026-04-07 |
+| guard:maintainer-paths | pass | maintainer handoff 中的禁用 sample path 已清理，root guard 恢復綠燈 | 2026-04-07 |
+| sync precheck | pass | 在正式 git metadata 環境以 `origin/main` 重跑，working tree clean 且無 divergence | 2026-04-07 |
+| sync verify | pass | 在 push 後以 `origin/main` 重跑，manifest-backed preflight 與 portable smoke 均通過 | 2026-04-07 |
+| API smoke | pass | `npm run test:api:smoke` 與 `npm run test:api:mapping:smoke` 均通過 | 2026-04-07 |
 
 ## 📈 VERIFICATION_EVALUATION
 
@@ -58,41 +59,52 @@ Phase 5 證據顯示 cutover 主線已成立：
 2. downstream `portal` 與 `api` 自身都可獨立編譯，未發現因 Phase 4 cutover 造成的直接 regression。
 3. legacy `.agent/**` 已退位為 compatibility shim，`/dev` 與 reviewer contract 已由 root `.github/**` / `.github/workflow-core/**` 承接。
 
-但 sync lane 的兩個硬 gate 無法在目前 workspace 完整執行，原因是本工作區不含 `.git` metadata；此外 root maintainer path guard 仍有既有違規紀錄。基於這兩個限制，本輪 sign-off 不適合宣告無保留 `PASS`，結論收斂為 `PASS_WITH_RISK`。
+後續補強完成後，git-backed sync lane、root guard 與 reviewer hardening 也都已轉綠：
+
+1. repo 已初始化並 push 到 `https://github.com/foreverwow001/Ivyhouse_op_system`，`origin/main` 與本地 `HEAD` 對齊。
+2. `workflow_core_sync_precheck.py` 與 `workflow_core_sync_verify.py` 已在 `release_ref=origin/main` 下通過。
+3. maintainer path guard 違規已清除，root `build:api`、`build:portal`、`test:api:smoke`、`test:api:mapping:smoke` 均通過。
+4. reviewer CLI 已補 allowlist + pinned path hardening，preflight 為 `status=ready`。
+
+因此 `Idx-029` 的最終 sign-off 已可從先前的 `PASS_WITH_RISK` 收斂為無保留 `PASS`。
 
 ## ✅ VALIDATION_SUMMARY
 
 - `python .github/workflow-core/runtime/scripts/portable_smoke/workflow_core_smoke.py --repo-root . --json` -> `status=pass`
-- `python .github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py --repo-root . --json` -> `status=ready`, `command_available=true`
-- `python .github/workflow-core/runtime/scripts/workflow_core_sync_precheck.py --repo-root . --release-ref idx-029-phase-5 --json` -> `status=error`，原因：`fatal: not a git repository`
-- `python .github/workflow-core/runtime/scripts/workflow_core_sync_verify.py --repo-root . --release-ref idx-029-phase-5 --json` -> `status=error`，原因：`fatal: not a git repository`
+- `python .github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py --repo-root . --json` -> `status=ready`, `command_available=true`, `command_allowed=true`, `pinned_path_matches=true`
+- `python .github/workflow-core/runtime/scripts/workflow_core_sync_precheck.py --repo-root . --release-ref origin/main --json` -> `status=pass`
+- `python .github/workflow-core/runtime/scripts/workflow_core_sync_verify.py --repo-root . --release-ref origin/main --json` -> `status=pass`
 - `npm run build --workspace @ivyhouse/portal` -> pass
 - `npm run build --workspace @ivyhouse/api` -> pass
-- `npm run guard:maintainer-paths` -> fail，命中 `project_maintainers/chat/handoff/2026-04-03_mvp-status-and-chat-reorg_handoff.md`
+- `npm run guard:maintainer-paths` -> pass
+- `npm run build:api` -> pass
+- `npm run test:api:smoke` -> pass
+- `npm run test:api:mapping:smoke` -> pass
 - workflow smoke evidence:
   - `.github/prompts/dev.prompt.md` 宣告 root `.github/**` 與 `.github/workflow-core/**` 為正式 authority
   - `.agent/workflows/AGENT_ENTRY.md` 明確為 legacy compatibility shim
   - `.workflow-core/state/skills/INDEX.local.md` 存在且列出 local skills catalog
   - `.vscode/settings.json` 使用 `chat-primary-with-one-shot-reviewers`
   - `.devcontainer/devcontainer.json` `postCreateCommand` 已指向 `.github/workflow-core/runtime/scripts/devcontainer/post_create.sh`
+  - `.github/workflow-core/roles/ivyhouse_coordinator_overlay.md` 與 `project_maintainers/README.md` 已改為 canonical runtime script path，不再直接引用 `.agent/runtime/scripts/**`
 
 ## 🧪 REVIEWER_SIGNOFF
 
 ### QA Verdict
 
-- Verdict: `PASS_WITH_RISK`
+- Verdict: `PASS`
 - Summary:
-  - 現有證據足以支持 root authority、reviewer readiness 與 downstream build 主線可用。
-  - 缺少 `/dev` 實際 invocation 與完整 sync lane 執行證據，因此無法給無保留 PASS。
-  - root `guard:maintainer-paths` 失敗仍會污染 root script 信號。
+  - root authority、reviewer readiness、git-backed sync lane 與 downstream build/smoke 主線均已通過。
+  - 先前缺少 `.git` metadata 與 root guard 污染的問題都已收斂。
+  - repo 內活躍 `.agent/runtime/scripts/**` 引用已切到 canonical path。
 
 ### Security Verdict
 
-- Verdict: `PASS_WITH_RISK`
+- Verdict: `PASS`
 - Summary:
-  - reviewer CLI readiness 與 fresh-session 設定已到位，未見新增 secret hardcode。
-  - 但 reviewer command 仍屬系統解析路徑，缺少更強的 binary identity / allowlist 驗證。
-  - 缺少 `.git` metadata 使 authority 完整性無法做 manifest-backed confirm。
+  - reviewer CLI readiness、fresh-session、allowlist 與 pinned path 驗證都已到位，未見新增 secret hardcode。
+  - manifest-backed sync verify 已在正式 git 環境通過，authority 完整性可被確認。
+  - 活躍 runtime 引用已不再依賴 `.agent/runtime/scripts/**`。
 
 ## 📎 EVIDENCE
 
@@ -112,21 +124,25 @@ Phase 5 證據顯示 cutover 主線已成立：
 - downstream build evidence:
   - `@ivyhouse/portal` build log -> pass
   - `@ivyhouse/api` direct build log -> pass
+  - `npm run build:api` -> pass
+  - `npm run test:api:smoke` -> pass
+  - `npm run test:api:mapping:smoke` -> pass
+  - git remote: `https://github.com/foreverwow001/Ivyhouse_op_system.git`
+  - final branch head: `486d79e97d0b95f2db845e0151a8299b3ae65344`
 
 ## ⚠️ RESIDUAL_RISKS
 
-- workspace 缺少 `.git` metadata，導致 Phase 5 無法完成 manifest-backed sync precheck / sync verify；若要取得最終無保留 sign-off，需在有完整 git metadata 的環境補跑。
-- reviewer CLI command 目前依 workspace settings 解析，仍建議後續補做 absolute path / allowlist / identity 驗證 hardening。
-- root `guard:maintainer-paths` 仍受既有 maintainer handoff 文件污染，需另開 work unit 清理，否則會持續干擾 root build signal。
-- legacy `.agent/runtime/tools/**` 雖已降級為 compatibility note，但若後續要再縮小 attack surface，仍可評估 archive。
+- repo 內 live authority 已不依賴 `.agent/runtime/scripts/**`，但整個 `.agent/**` 仍是對舊入口的 compatibility promise；若要真的刪除 `.agent/`，應作為另一個明確的 breaking cleanup work unit，並同步移除/更新所有 compatibility 說明。
+- `.agent/runtime/tools/**` 與其他 forwarding docs 目前不再是 authority，但仍保留給舊入口使用者；是否 archive / delete 屬後續維護決策，不是這次 cutover 的硬 gate。
 
 ## 🏁 FINAL_SIGNOFF
 
-- 結論：`PASS_WITH_RISK`
+- 結論：`PASS`
 - Owner: workflow maintainers
 - 關閉條件：
-  1. 在含 `.git` metadata 的正式 repo 環境重跑 sync precheck / sync verify
-  2. 清理 root `guard:maintainer-paths` 的既有違規項
-  3. 視需要補 reviewer CLI identity hardening
+  1. `origin/main` 與本地 `HEAD` 對齊
+  2. git-backed sync precheck / sync verify 通過
+  3. reviewer CLI allowlist / pinned path hardening 通過
+  4. root build/check 與 API smoke 通過
 
-在上述殘餘風險已明確記錄且不構成當前 cutover regression 的前提下，`Idx-029` 可視為完成 workflow-core 升版與 cutover。
+在上述條件已滿足的前提下，`Idx-029` 已完成 workflow-core 升版與 cutover，並取得最終 `PASS`。
