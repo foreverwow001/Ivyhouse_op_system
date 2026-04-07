@@ -3,7 +3,7 @@
 - `Idx-029` Phase 4 authority cutover 已完成。
 - root `.github/**` 與 `.github/workflow-core/**` 現在是本 repo 的正式 workflow navigation 與 canonical source。
 - `.workflow-core/**` 是正式 mutable/runtime companion root。
-- `.agent/**` 僅保留 compatibility shim / forwarding surface，不再是 live authority。
+- `.agent/**` 已退役為待移除的 legacy surface，不再是 live authority，也不再承諾相容入口。
 
 ## 正式入口
 
@@ -26,9 +26,9 @@
 
 - QA / Security Review 不提供 workspace-level slash prompt；請改走固定 review package。
 - repo 不提供額外的 engineer-only slash prompt；Engineer 直接實作請切換 `Ivy Engineer` custom agent。
-- `.agent/**` 不再提供正式 workflow 入口；若必須經 legacy path 啟動，應視為 compatibility shim，而非另一套 authority。
+- `.agent/**` 不再提供正式 workflow 入口；任何舊 path 僅屬待刪 legacy tree，不可視為受支援入口。
 
 ## 維護規則
 
 - 若 root `.github` 與 `.github/workflow-core` 已有對應內容，維護時優先改新 canonical root。
-- 需要更新 local skills/state/config 時，應改 `.workflow-core/**`，不得再回寫 `.agent/state/**`、`.agent/config/**` 或 `.agent/skills_local/**`。
+- 需要更新 local skills/state/config 時，應改 `.workflow-core/**`；`.agent/**` 已進入退役流程，不得再回寫。

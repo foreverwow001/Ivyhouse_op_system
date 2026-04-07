@@ -30,16 +30,12 @@ def _discover_repo_root(start_dir: Path) -> Path:
     for candidate in [start_dir, *start_dir.parents]:
         if (candidate / ".github" / "workflow-core" / "AGENT_ENTRY.md").exists():
             return candidate
-        if (candidate / ".agent" / "workflows" / "AGENT_ENTRY.md").exists():
-            return candidate
     raise RuntimeError(f"無法從 bounded orchestrator 推導 repo root: {start_dir}")
 
 
 REPO_ROOT = _discover_repo_root(RUNTIME_SCRIPTS_DIR)
 CANONICAL_STATIC_ROOT = REPO_ROOT / ".github" / "workflow-core"
-LEGACY_STATIC_ROOT = REPO_ROOT / ".agent"
-WORKFLOW_CORE_ROOT = CANONICAL_STATIC_ROOT if CANONICAL_STATIC_ROOT.exists() else LEGACY_STATIC_ROOT
-SHARED_FILE = WORKFLOW_CORE_ROOT / "skills" / "_shared" / "__init__.py"
+SHARED_FILE = CANONICAL_STATIC_ROOT / "skills" / "_shared" / "__init__.py"
 
 WORK_UNIT_HEADING = "### Bounded work unit contract"
 EXECUTION_BLOCK_START = "<!-- EXECUTION_BLOCK_START -->"

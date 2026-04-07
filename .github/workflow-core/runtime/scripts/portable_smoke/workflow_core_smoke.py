@@ -35,8 +35,6 @@ def detect_runtime_surface() -> str:
     parts = SCRIPT_PATH.parts
     if ".github" in parts and "workflow-core" in parts:
         return "canonical"
-    if ".agent" in parts:
-        return "legacy"
     return "unknown"
 
 

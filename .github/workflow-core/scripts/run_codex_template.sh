@@ -17,7 +17,7 @@ PLAN_FILE="${1:-}"
 LOG_FILE=".workflow-core/state/execution_log.jsonl"
 BACKUP_PATCH=".workflow-core/state/.pre_execution_backup.patch"
 ORCHESTRATOR_FILE=".github/workflow-core/runtime/scripts/bounded_work_unit_orchestrator.py"
-mkdir -p .agent .workflow-core/state
+mkdir -p .workflow-core/state
 
 PYTHON_BIN="${PYTHON_BIN:-}"
 if [[ -z "$PYTHON_BIN" ]]; then

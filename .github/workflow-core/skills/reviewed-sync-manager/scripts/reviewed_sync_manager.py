@@ -66,10 +66,7 @@ def is_workflow_template_repo(repo_root: Path) -> bool:
     # Use stable template-owned markers instead of a dated maintainer doc path,
     # because active reviewed-sync docs may be reorganized or archived over time.
     return (
-        (
-            (repo_root / ".github" / "workflow-core" / "workflow_baseline_rules.md").exists()
-            or (repo_root / ".agent" / "workflow_baseline_rules.md").exists()
-        )
+        (repo_root / ".github" / "workflow-core" / "workflow_baseline_rules.md").exists()
         and (repo_root / "maintainers" / "chat" / "README.md").exists()
     )
 

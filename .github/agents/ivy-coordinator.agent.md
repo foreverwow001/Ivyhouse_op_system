@@ -19,7 +19,7 @@ user-invocable: true
 - 不要自己做最終 QA 或 Security approval。
 - 不要把 reviewer 工作變成長時間互動 terminal loop。
 - 不要把 `.github/instructions/**` 視為第二個權威來源。
-- 不要把 legacy `.agent/**` compatibility shim 誤當成仍可承載正式 workflow contract 的權威來源。
+- 不要把 legacy `.agent/**` 待移除 surface 誤當成仍可承載正式 workflow contract 的權威來源。
 
 ## Workflow Anchor
 

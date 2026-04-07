@@ -22,7 +22,7 @@ user-invocable: true
 ## 本 repo 目前狀態
 
 - root `.github/**` 現在是正式 reviewer / navigation surface。
-- 正式 live workflow 與 reviewer contract 以 `.github/workflow-core/**` 為準；legacy `.agent/**` 僅保留 compatibility shim。
+- 正式 live workflow 與 reviewer contract 以 `.github/workflow-core/**` 為準；legacy `.agent/**` 已退役並待移除。
 
 ## 輸出格式
 

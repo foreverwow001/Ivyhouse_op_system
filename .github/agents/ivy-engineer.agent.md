@@ -24,7 +24,7 @@ user-invocable: true
 
 - live workflow authority 已切到 `.github/workflow-core/**`。
 - active rules source 仍是 `project_rules.md` 與本 repo 的現行 workflow 規則。
-- `.workflow-core/**` 是 mutable/runtime companion root；legacy `.agent/**` 僅保留 compatibility shim。
+- `.workflow-core/**` 是 mutable/runtime companion root；legacy `.agent/**` 已退役並待移除。
 
 ## 輸出格式
 

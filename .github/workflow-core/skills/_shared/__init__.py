@@ -23,24 +23,18 @@ def _discover_repo_root(start_dir: Path) -> Path:
     for candidate in [start_dir, *start_dir.parents]:
         if (candidate / ".github" / "workflow-core" / "AGENT_ENTRY.md").exists():
             return candidate
-        if (candidate / ".agent" / "workflows" / "AGENT_ENTRY.md").exists():
-            return candidate
     raise RuntimeError(f"無法從 shared skill module 推導 repo root: {start_dir}")
 
 
 REPO_ROOT = _discover_repo_root(SHARED_DIR)
 CANONICAL_STATIC_ROOT = REPO_ROOT / ".github" / "workflow-core"
-LEGACY_STATIC_ROOT = REPO_ROOT / ".agent"
-WORKFLOW_CORE_ROOT = CANONICAL_STATIC_ROOT if CANONICAL_STATIC_ROOT.exists() else LEGACY_STATIC_ROOT
-SKILLS_DIR = WORKFLOW_CORE_ROOT / "skills"
-AGENT_DIR = WORKFLOW_CORE_ROOT
+SKILLS_DIR = CANONICAL_STATIC_ROOT / "skills"
+AGENT_DIR = CANONICAL_STATIC_ROOT
 PUBLIC_SCHEMAS_DIR = SKILLS_DIR / "schemas"
 MUTABLE_ROOT = REPO_ROOT / ".workflow-core"
 STATE_SKILLS_DIR = MUTABLE_ROOT / "state" / "skills"
 CONFIG_SKILLS_DIR = MUTABLE_ROOT / "config" / "skills"
 LOCAL_SKILLS_DIR = MUTABLE_ROOT / "skills_local"
-
-LEGACY_AUDIT_LOG_PATH = LEGACY_STATIC_ROOT / "skills" / "_shared" / "audit.log"
 
 CANONICAL_MANIFEST_PATH = STATE_SKILLS_DIR / "skill_manifest.json"
 CANONICAL_WHITELIST_PATH = CONFIG_SKILLS_DIR / "skill_whitelist.json"
@@ -258,8 +252,6 @@ __all__ = [
     "AGENT_DIR",
     "REPO_ROOT",
     "CANONICAL_STATIC_ROOT",
-    "LEGACY_STATIC_ROOT",
-    "WORKFLOW_CORE_ROOT",
     "MUTABLE_ROOT",
     "SHARED_DIR",
     "PUBLIC_SCHEMAS_DIR",
@@ -269,7 +261,6 @@ __all__ = [
     "CANONICAL_MANIFEST_PATH",
     "CANONICAL_WHITELIST_PATH",
     "AUDIT_LOG_PATH",
-    "LEGACY_AUDIT_LOG_PATH",
     "INDEX_PATH",
     "LOCAL_INDEX_PATH",
     "NON_PACKAGE_DIRS",

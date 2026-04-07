@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const net = require('node:net');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
 const { once } = require('node:events');
@@ -37,43 +38,111 @@ async function run() {
 
 async function waitForServerReady(server) {
   await new Promise((resolve, reject) => {
+    let settled = false;
+    let stdoutBuffer = '';
+    let stderrBuffer = '';
     const timeout = setTimeout(() => {
-      reject(new Error('API smoke test 等待 server 啟動逾時'));
+      const details = [
+        'API smoke test 等待 server 啟動逾時',
+        `stdout=${summarizeOutput(stdoutBuffer)}`,
+        `stderr=${summarizeOutput(stderrBuffer)}`,
+      ].join('\n');
+
+      finish(new Error(details));
     }, 20000);
+
+    const readinessInterval = setInterval(() => {
+      probePort(port)
+        .then(() => finish())
+        .catch(() => undefined);
+    }, 200);
 
     const onStdout = (chunk) => {
       const text = chunk.toString();
+      stdoutBuffer = appendOutput(stdoutBuffer, text);
 
       if (text.includes('Nest application successfully started')) {
-        cleanup();
-        resolve(undefined);
+        finish();
       }
     };
 
     const onStderr = (chunk) => {
       const text = chunk.toString();
+      stderrBuffer = appendOutput(stderrBuffer, text);
       if (text.trim()) {
-        cleanup();
-        reject(new Error(`API smoke test 啟動失敗: ${text}`));
+        finish(new Error(`API smoke test 啟動失敗: ${text}`));
       }
     };
 
     const onExit = (code) => {
-      cleanup();
-      reject(new Error(`API smoke test server 提前結束，exit code=${code}`));
+      finish(new Error(`API smoke test server 提前結束，exit code=${code}`));
     };
 
     function cleanup() {
       clearTimeout(timeout);
+      clearInterval(readinessInterval);
       server.stdout.off('data', onStdout);
       server.stderr.off('data', onStderr);
       server.off('exit', onExit);
+    }
+
+    function finish(error) {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      cleanup();
+
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve(undefined);
     }
 
     server.stdout.on('data', onStdout);
     server.stderr.on('data', onStderr);
     server.on('exit', onExit);
   });
+}
+
+function probePort(portNumber) {
+  return new Promise((resolve, reject) => {
+    const socket = net.createConnection({ host: '127.0.0.1', port: portNumber });
+
+    const timer = setTimeout(() => {
+      socket.destroy();
+      reject(new Error('probe timeout'));
+    }, 150);
+
+    socket.once('connect', () => {
+      clearTimeout(timer);
+      socket.end();
+      resolve(undefined);
+    });
+
+    socket.once('error', (error) => {
+      clearTimeout(timer);
+      reject(error);
+    });
+  });
+}
+
+function appendOutput(buffer, chunk) {
+  const next = `${buffer}${chunk}`;
+
+  if (next.length <= 500) {
+    return next;
+  }
+
+  return next.slice(-500);
+}
+
+function summarizeOutput(value) {
+  const normalized = String(value ?? '').trim();
+  return normalized ? normalized : '<empty>';
 }
 
 async function runFixture(fixture) {

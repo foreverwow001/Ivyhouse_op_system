@@ -37,5 +37,12 @@
   "ivyhouseTerminalPty.smokeIterationCount": 3,
   "ivyhouseTerminalPty.maxRetryCount": 1,
   "python.analysis.typeCheckingMode": "standard",
-  "chat.agent.maxRequests": 100
+  "chat.agent.maxRequests": 100,
+  "github.copilot.chat.executionSubagent.enabled": true,
+  "github.copilot.chat.executionSubagent.toolCallLimit": 10,
+  "github.copilot.chat.searchSubagent.toolCallLimit": 5,
+  "chat.agentSkillsLocations": {
+    "~/.github/workflow-core/skills": true,
+    "~/.workflow-core/skills_local": true
+  }
 }

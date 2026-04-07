@@ -4,7 +4,7 @@
 
 - 本 repo 目前正在執行 `Idx-029` workflow-core 升版。
 - `Idx-029` Phase 4 已完成 authority cutover。
-- root `.github/**` 與 `.github/workflow-core/**` 現在是正式 workflow authority；`.agent/**` 僅保留 compatibility shim / forwarding surface。
+- root `.github/**` 與 `.github/workflow-core/**` 現在是正式 workflow authority；`.agent/**` 已退役為待移除 legacy surface。
 
 ## Authoritative Surfaces
 
@@ -19,7 +19,7 @@
 ## Workflow Mode
 
 - 目前 live 執行路徑是 `chat-primary-with-one-shot-reviewers`。
-- reviewer readiness、固定輸入包與 root navigation 以 `.github/workflow-core/**` 為準；舊 `.agent/**` 不再承擔正式 authority。
+- reviewer readiness、固定輸入包與 root navigation 以 `.github/workflow-core/**` 為準；舊 `.agent/**` 不再承擔正式 authority，也不再是受支援入口。
 
 ## Execution Discipline
 

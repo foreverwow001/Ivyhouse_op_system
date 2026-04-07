@@ -46,7 +46,7 @@ applyTo: "**"
 6. Cross-QA 是硬規則：`qa_tool` 不得等於 `last_change_tool`
 7. 例外必須明確記錄並取得用戶確認
 8. Research、Maintainability、UI-UX、Evidence、Security、Domain、Plan Validator、Preflight gates 必須執行並寫入 Log
-9. `Idx-029` Phase 4 cutover 完成後，root `.github/**` 與 `.github/workflow-core/**` 是正式 workflow authority；`.agent/**` 僅保留 compatibility shim / forwarding surface
+9. `Idx-029` Phase 4 cutover 完成後，root `.github/**` 與 `.github/workflow-core/**` 是正式 workflow authority；`.agent/**` 已退役為待移除 legacy surface
 
 ## 正式流程觸發條件
 以下任一命中，必須走正式流程，不得視為小修：

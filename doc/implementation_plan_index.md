@@ -35,6 +35,7 @@
 | Idx-027 | Workflow 修正切片：UI/UX local skills 自動載入鏈與 PTY formal execution 強制收斂 | Phase 1 → Go-Live Support | Completed | Idx-026 | skills trigger checklist、Coordinator/Engineer 注入規則、PTY execution enforcement、最小 smoke 驗證 | 已補建 project-local authoritative trigger checklist、Coordinator PTY contract 與 formal execution 後驗證條文；preflight 與 strict PTY evidence check 皆通過，可作為 `Idx-023` 前端切片的 workflow 基座 |
 | Idx-028 | Idx-023 Slice 1：Portal app scaffold、login page 與 landing shell | Phase 1 → Go-Live | Completed | Idx-026, Idx-027 | Next.js Portal app skeleton、login page、landing shell、workspace scripts、PTY formal execution evidence | 已完成最小前端切片：Portal workspace app、品牌化 login shell、流程導向 landing shell 與 `build:portal` 驗證均已落地；後續由 `Idx-023` 承接其餘 go-live blocker 面 |
 | Idx-029 | Workflow-core 升版與 cutover 計畫：由 `.agent` PTY-primary 遷移到 `.github/workflow-core` Chat-primary | Phase 1 → Workflow Upgrade | Completed | Idx-027, Idx-028 | phased cutover plan、bootstrap refresh checklist、檔案 ownership migration matrix、驗證與 rollback gates | 已完成主計畫、Phase 0-5 supporting plans、Phase 0 ownership/inventory、Phase 1 staged root `.github` bootstrap refresh、Phase 2 canonical core + mutable root scaffold、Phase 3 local overlay split/move、Phase 4 live authority cutover + `.agent/**` shim 收斂，以及 Phase 5 verify / smoke / sign-off；最終結論已收斂為 `PASS`，完整證據與 `.agent/` 後續刪除判定記錄於 `doc/logs/Idx-029_phase-5_log.md` |
+| Idx-030 | `.agent` 刪除前置作業：legacy surface 退役、canonical 去耦與刪除前驗證 | Phase 1 → Workflow Upgrade Follow-up | Completed | Idx-029 | pre-delete inventory、canonical de-coupling、legacy retirement prep、delete-readiness evidence | 已完成 `.agent` 刪除前置盤點、canonical/live surface 去耦、root `.github/**` compatibility promise 收斂，並在不含 `.agent/` 的臨時副本完成 reviewer preflight、portable smoke、sync precheck / verify、guard、build 與 API smoke；結論為現在已可安全刪除 `.agent/` |
 
 ## 依賴語意
 
@@ -77,12 +78,12 @@
 
 ## 統計資訊
 
-總任務數：29
+總任務數：30
 - Approved：0
 - Planning：3
 - In Progress：0
 - QA：0
-- Completed：26
+- Completed：27
 
 ## 任務編號規則
 
