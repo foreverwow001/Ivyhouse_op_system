@@ -40,7 +40,7 @@
 | qa_tool | get_errors + targeted checks + manual QA readback |
 | last_change_tool | GitHub Copilot |
 | qa_result | PASS |
-| commit_hash | pending |
+| commit_hash | 7a63de4 |
 
 ## 📝 PLANNING_REFINEMENT
 
@@ -68,9 +68,9 @@
 
 ### Residual Risks
 
-- GitHub-hosted `release-preflight` 尚待實際對接 staging / production environment bindings 後觸發一次，才能補齊 hosted runner artifact
+- GitHub-hosted `release-preflight` 已完成 staging bindings 與 artifact 驗證；production environment bindings / secrets 仍待正式接線
 - production 若需 clone drill，仍需 DBA / 受控 runner 視窗與 `ALLOW_PRODUCTION_REPLAY_DRILL=true` 明確授權
-- `Idx-024` 與 `Idx-025` 的 post-launch / progressive hardening 尚未開始
+- `Idx-024` 已進入 planning refinement；`Idx-025` 的 progressive hardening 仍未開始
 
 ## 🛠️ SKILLS_EXECUTION_REPORT
 
@@ -126,7 +126,7 @@
 
 - 結論：PASS
 - 風險：workspace 無 one-shot reviewer tool，因此本輪 QA 以 reviewer preflight、get_errors、focused tests 與 executable smoke 作替代證據
-- 後續事項：Hosted runner `release-preflight` 實跑、`Idx-024` post-launch hardening、`Idx-025` progressive hardening
+- 後續事項：`Idx-024` post-launch high-risk hardening、production environment binding / runbook 收斂、`Idx-025` progressive hardening
 
 ## 📎 EVIDENCE
 
@@ -192,3 +192,9 @@
 - Executable validation: local user-owned PostgreSQL 15 on `127.0.0.1:55432` -> `npm run drill:migration-replay` PASS (`migrate deploy` / `seed` / `preflight` / `inventory opening balance smoke` / `daily ops mainline smoke` 全數通過)
 - Security hardening validation: `MIGRATION_PREFLIGHT_TARGET=production npm run drill:migration-replay` -> FAIL-CLOSED，需顯式 `ALLOW_PRODUCTION_REPLAY_DRILL=true`
 - Reviewer preflight: `python .github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py --json` -> READY
+- GitHub REST API: `staging` environment 建立完成，environment variables `DATABASE_URL`、`ADMIN_DATABASE_URL`、`NEXT_PUBLIC_PORTAL_API_BASE_URL` 已寫入
+- Hosted validation: GitHub Actions run `24097220713` -> FAIL，原因為 `MIGRATION_PREFLIGHT_OUTPUT=apps/api/migration-preflight-report.json` 對 `@ivyhouse/api` workspace 為錯誤相對路徑
+- Fix evidence: commit `7a63de4` (`fix: correct release preflight artifact path`) 已推送至 `main`
+- Hosted validation: GitHub Actions run `24097414322` -> PASS（`release-preflight`、`quality-gate` 皆成功）
+- Hosted artifact: `migration-preflight-staging` / artifact id `6312520463`
+- Hosted artifact readback: `status=pass`, `target=staging`, `expectedMigrationCount=4`, `appliedMigrationCount=0`, `deploymentNeeded=true`

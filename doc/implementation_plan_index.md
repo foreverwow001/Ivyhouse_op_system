@@ -28,8 +28,8 @@
 | Idx-020 | Opening balance 多窗口 / 中斷補救治理補強 | Phase 1 | Completed | Idx-012, Idx-017 | 首盤中斷補救、跨倉 / 多窗口規則、取消 / 恢復策略 | 已完成單倉 opening balance 的 cancel-only recovery、不同 countScope 不可平行、禁止 live ops during opening balance、runbook / policy / API contract 與 focused smoke evidence；多倉與 resume 保留後續擴張 |
 | Idx-021 | Inventory-count / Production-planning 正式 auth 與 maker-checker 補強 | Phase 1 | Completed | Idx-013, Idx-015, Idx-016, Idx-017 | 正式身份驗證承接、inventory-count / production-planning 角色邊界終版、approval skeleton、maker-checker 路徑 | 已完成第一個正式實作切片：Portal session principal 已取代過渡身份來源，inventory-count approval skeleton 已落地，production-planning 已切至 principal 驅動；殘餘角色邊界風險轉交 sign-off 管理 |
 | Idx-022 | Production-planning 完整 approval persistence 與 approver boundary 收斂 | Phase 1 | Completed | Idx-018, Idx-021 | production-planning approval persistence、plan/rerun 決策端點、`管理員` 最終 approver 邊界收斂、deploy preflight evidence | 已完成 production-planning maker-checker persistence、admin-only approver 邊界收斂、本機 / 測試叢集 deploy preflight 與 readback evidence；殘餘 revision 鏈長與 admin+supervisor 交集政策列為後續治理 |
-| Idx-023 | Go-Live Blocker 收斂：前端骨架、CI/CD、環境治理、主資料完整化與正式環境 Preflight | Phase 1 → Go-Live | Completed | Idx-018, Idx-022 | 前端 Portal UI、CI/CD Pipeline、環境變數與密鑰治理、主資料升格、正式環境 migration preflight、production-planning approval 完化 | 已完成 Slice 1-7：Portal workbench、CI/env governance、主資料 active surface、read-only migration preflight、scratch DB replay drill、QA/security review 與 executable evidence 已落地 |
-| Idx-024 | Go-Live 後高風險補強：E2E 場景擴充、運維預案與用戶操作手冊 | Phase 1 → Post-Launch | Planning | Idx-023 | E2E 邊界場景測試、正式環境運維預案、中文版用戶操作手冊 | Go-live 後 2 週內補齊營運支撐能力；不阻斷 go-live 但延遲會增加事故恢復成本 |
+| Idx-023 | Go-Live Blocker 收斂：前端骨架、CI/CD、環境治理、主資料完整化與正式環境 Preflight | Phase 1 → Go-Live | Completed | Idx-018, Idx-022 | 前端 Portal UI、CI/CD Pipeline、環境變數與密鑰治理、主資料升格、正式環境 migration preflight、production-planning approval 完化 | 已完成 Slice 1-7：Portal workbench、CI/env governance、主資料 active surface、read-only migration preflight、scratch DB replay drill、QA/security review、one-shot reviewer wrapper，並補齊 GitHub-hosted `release-preflight` artifact evidence |
+| Idx-024 | Go-Live 後高風險補強：E2E 場景擴充、運維預案與用戶操作手冊 | Phase 1 → Post-Launch | In Progress | Idx-023 | E2E 邊界場景測試、正式環境運維預案、中文版用戶操作手冊 | 已啟動 planning refinement，優先整理 E2E 邊界場景矩陣與運維預案；用戶手冊保留後續 slice |
 | Idx-025 | 漸進補強：測試深化、Observability、Opening Balance 擴張與效能基準 | Phase 2 | Planning | Idx-023, Idx-024 | 後端單元測試、Logging & Observability、多窗口/多倉 opening balance、效能基準、前端品質 | 將 Phase 1 MVP 從「可用」推進到「可持續維護與擴張」；承接 Idx-020 deferred |
 | Idx-026 | Repo-local UI/UX skill family 建置：品牌 style、入口頁、流程 landing、2.5D icon 與前端互動狀態 | Phase 1 → Go-Live Support | Completed | Idx-023 | `.agent/skills_local/` UI/UX skills、local overlay catalog、skill references、Portal 前端實作 guardrail | 已完成 repo-local UI/UX skill family 第一版與 overlay catalog，供 `Idx-023` 的 login / landing / theme / icon / UI states 前端切片直接使用 |
 | Idx-027 | Workflow 修正切片：UI/UX local skills 自動載入鏈與 PTY formal execution 強制收斂 | Phase 1 → Go-Live Support | Completed | Idx-026 | skills trigger checklist、Coordinator/Engineer 注入規則、PTY execution enforcement、最小 smoke 驗證 | 已補建 project-local authoritative trigger checklist、Coordinator PTY contract 與 formal execution 後驗證條文；preflight 與 strict PTY evidence check 皆通過，可作為 `Idx-023` 前端切片的 workflow 基座 |
@@ -54,8 +54,8 @@
 ### 下一階段
 
 3. **Idx-023（Tier 1 Blocker）**：go-live 前必須完成。關鍵路徑為前端 Portal UI；`Idx-028` 已交付其第一個最小切片，後續再擴到 intake / daily ops / CI/CD / env / master data 等 blocker 面。
-4. **Idx-024（Tier 2 High Risk）**：go-live 後 2 週內完成。E2E 邊界場景補強、運維預案、用戶操作手冊。
-5. **Idx-025（Tier 3 Progressive）**：go-live 穩定後漸進補強。測試深化、Observability、多窗口 opening balance、效能基準。
+4. **Idx-024（Tier 2 High Risk）**：已啟動。優先補 E2E 邊界場景矩陣、運維預案與 hosted preflight readback 導引，最後再收手冊。
+5. **Idx-025（Tier 3 Progressive）**：待 `Idx-024` 收斂後再啟動。測試深化、Observability、多窗口 opening balance、效能基準。
 
 ## 狀態說明
 
@@ -80,8 +80,8 @@
 
 總任務數：30
 - Approved：0
-- Planning：3
-- In Progress：0
+- Planning：2
+- In Progress：1
 - QA：0
 - Completed：27
 
