@@ -16,12 +16,13 @@
 ## 🎯 WORKFLOW_SUMMARY
 
 ### Goal
-完成 `.agent/` 刪除前的 canonical 去耦、legacy 退役準備與 delete-readiness 驗證。
+完成 `.agent/` 刪除前的 canonical 去耦、legacy 退役準備、實體刪除與最終完整驗證。
 
 ### Scope
 - 建立 `.agent` 刪除前置作業盤點
 - 清除 canonical/live surface 對 `.agent/` 的依賴與 compatibility promise
 - 跑完整驗證，並以不含 `.agent/` 的臨時副本再驗一次
+- 在原 workspace 實際刪除 `.agent/` 並重跑最終完整驗證
 
 ## 🧾 EXECUTION_SUMMARY
 
@@ -31,8 +32,8 @@
 | security_reviewer_tool | N/A |
 | qa_tool | N/A |
 | last_change_tool | GitHub Copilot |
-| qa_result | N/A |
-| commit_hash | working-tree-uncommitted |
+| qa_result | PASS |
+| commit_hash | `a28a5ea` |
 
 ## 🛠️ SKILLS_EXECUTION_REPORT
 
@@ -41,6 +42,8 @@
 | inventory | `.agent` pre-delete surface | success | 建立 active blockers / legacy surface / historical references 清單 | 2026-04-07 |
 | validation | current workspace | success-with-known-dirty | reviewer/portable smoke/guard/build/smoke 通過；sync verify 因 managed divergence 對 `origin/main` 屬預期失敗 | 2026-04-07 |
 | validation | no-agent temp clone | success | 在不含 `.agent/` 的副本中完成完整 delete-readiness 驗證 | 2026-04-07 |
+| implementation | original workspace | success | 已建立 `ae58e66` 前置作業提交並以 `a28a5ea` 實際刪除 `.agent/` | 2026-04-07 |
+| validation | original workspace after delete | success | reviewer/portable smoke/sync precheck/sync verify/guard/build/API smoke 全數通過 | 2026-04-07 |
 
 ## 📈 SKILLS_EVALUATION
 
@@ -49,8 +52,8 @@
 ## ✅ QA_SUMMARY
 
 - 結論：PASS
-- 風險：current workspace 因本輪未提交變更，對 `origin/main` 的 sync verify 仍會顯示 managed divergence；這是工作樹狀態，不是 `.agent` 刪除阻斷
-- 後續事項：下一輪即可執行 `.agent/` 實體刪除與殘留歷史 surface archive / cleanup
+- 風險：正式 artifact 尚未包含 push 後的 remote state；目前結論建立於本地 `main` 超前 `origin/main` 兩個 commit 的工作樹證據
+- 後續事項：可直接 push `ae58e66` 與 `a28a5ea`，或另開 work unit 處理歷史文件與 archive 清理
 
 ## 📎 EVIDENCE
 
@@ -74,6 +77,17 @@
 	- `npm run build:portal` -> pass
 	- `npm run test:api:smoke` -> pass
 	- `npm run test:api:mapping:smoke` -> pass
+- original workspace after `.agent` delete:
+	- `git --no-pager log --oneline -2` -> `a28a5ea chore(workflow): remove legacy agent tree`, `ae58e66 chore(workflow): prepare agent retirement`
+	- `python .github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py --repo-root . --json` -> `status=ready`
+	- `python .github/workflow-core/runtime/scripts/portable_smoke/workflow_core_smoke.py --repo-root . --json` -> `status=pass`
+	- `python .github/workflow-core/runtime/scripts/workflow_core_sync_precheck.py --repo-root . --release-ref origin/main --json` -> `status=pass`
+	- `python .github/workflow-core/runtime/scripts/workflow_core_sync_verify.py --repo-root . --release-ref origin/main --json` -> `status=pass`
+	- `npm run guard:maintainer-paths` -> pass
+	- `npm run build:api` -> pass
+	- `npm run build:portal` -> pass
+	- `npm run test:api:smoke` -> pass
+	- `npm run test:api:mapping:smoke` -> pass
 
 ## 🧾 EXECUTION_NOTES
 
@@ -84,9 +98,10 @@
 	 - `run_codex_template.sh` 不再建立 `.agent` 目錄
 2. root `.github/**` 已將 `.agent/**` 的描述從「compatibility shim」收斂為「已退役、待移除的 legacy surface」。
 3. delete-readiness 驗證採非破壞式方式：建立臨時副本、移除 `.agent/`、補齊 working tree、在副本內做臨時 commit 後重跑完整驗證。
+4. 最終已在原 workspace 以 commit `a28a5ea` 實際刪除 `.agent/`，且所有 workflow/build/smoke 驗證均通過。
 
 ## 🏁 FINAL_SIGNOFF
 
 - 結論：PASS
-- 判定：`.agent/` 刪除前置作業已完成，現在已可安全進入 `.agent/` 實體刪除 work step
-- 依據：no-agent temp clone 在完整驗證矩陣下通過 reviewer preflight、portable smoke、sync precheck / verify、guard、build 與 API smoke
+- 判定：`.agent/` 已完成實體刪除，正式 artifact 鏈已確認刪除後的原 workspace 與 no-agent temp clone 均通過完整驗證
+- 依據：原 workspace 與 no-agent temp clone 均通過 reviewer preflight、portable smoke、sync precheck / verify、guard、build 與 API smoke
