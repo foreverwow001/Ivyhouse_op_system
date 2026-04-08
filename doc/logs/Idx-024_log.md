@@ -109,6 +109,15 @@
 - 影響：`Idx-024` 的 repo 內交付與 Domain 面已完成收口；目前唯一剩餘阻斷為 external infra backup/restore sign-off checklist 仍為 `pending/fail`
 - 下一步：由 external infra owner 補齊 backup/restore rehearsal evidence、RTO/RPO 與三方 final sign-off；未補齊前不得把 `Idx-024` 宣告為 `Completed`
 
+## 🚧 CURRENT BLOCKER CONSOLIDATION
+
+### 2026-04-08 truth-first 收口
+
+- 本輪未取得新的 external infra evidence，因此 `doc/architecture/flows/production_backup_restore_signoff_checklist.md` 的既有 `fail/pending` 狀態不變，`Idx-024` 也不得從 `QA` 推進到 `Completed`。
+- `Idx-037` 已提供 repo-native technical block：production `release-preflight-guard` 會直接讀取 checklist 的 `可允許 production promote` 列；只要該列仍為 `fail`，production release-preflight 就會在 environment-bound preflight 前 fail-closed。
+- 目前仍待 external infra owner / platform owner 補齊的事實與平台證據包括：最近成功備份時間、備份保留策略、RTO、RPO、restore rehearsal 日期/結果/證據、三方 final sign-off，以及若 branch protection / required reviewers 被視為正式 production gate 一部分時的對應平台 readback。
+- 本輪只做 docs/status consolidation，不回填任何新的外部事實，也不把 repo-native guard 誤寫成 external sign-off 完成。
+
 ## 🏁 COMPLETION_MARKERS
 
 - `[ENGINEER_DONE]`: present
@@ -137,3 +146,4 @@
 - Security one-shot reviewer: `PASS_WITH_RISK`（direct one-shot prompt）
 - Domain one-shot reviewer：`PASS_WITH_RISK`（read-only Domain review 已確認 repo 內無持續阻斷的 domain blocker）
 - `doc/architecture/flows/production_backup_restore_signoff_checklist.md`：`Pre-Production Decision=fail`，`Final Sign-off=pending`
+- `Idx-037` repo-native guard binding：production `release-preflight-guard` 直接讀取 `production_backup_restore_signoff_checklist.md` 的 `可允許 production promote` 列；當前值仍為 `fail`，因此 production release-preflight 維持 technical fail-closed
