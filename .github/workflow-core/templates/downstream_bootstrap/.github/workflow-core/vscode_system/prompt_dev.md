@@ -33,9 +33,9 @@
 1. **你理解的目標**（簡短）
 2. **不做清單**（Out of Scope）
 3. **驗收條件草案**（逐條）
-4. **是否需要 Expert Review**（Yes/No）
+4. **是否需要 Expert Review**（由 batched `#askQuestions` 收集）
 
-並以 batched `#askQuestions` 等待確認後再進入執行；不得把 formal gate 改成一般聊天補填。
+上述 4 項屬於第一輪 formal gate，必須以 batched `#askQuestions` 收集；在 Copilot runtime 內應以 `vscode_askQuestions` 呼叫，不得先用一般聊天跑一輪 Yes/No，再把 formal gate 補填回去。
 
 若 `READ_BACK_REPORT` 已通過、且準備進入正式 `/dev` 任務，先建立 fresh context boundary：Engineer 使用新的 Copilot Chat turn / custom agent mode，reviewer 使用新的 one-shot reviewer session，再進 Mode Selection Gate / Plan。
 

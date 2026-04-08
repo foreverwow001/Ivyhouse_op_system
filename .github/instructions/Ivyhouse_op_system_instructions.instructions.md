@@ -42,6 +42,7 @@ applyTo: "**"
 2. 正式 workflow 預設走 PTY 主路徑
 3. fallback 只在 PTY 不可用且使用者明確同意後才可接手
 4. 不得預設啟用 fallback，不得把 fallback 當成常駐主路徑
+4.1 `/dev` 的 user-facing formal gate 仍以 VS Code `#askQuestions` 為準；在 Copilot runtime 內對應 `vscode_askQuestions`，只要該工具可實際呼叫，就不得把 gate 誤判成 blocker
 5. `[ENGINEER_DONE]`、`[QA_DONE]`、`[FIX_DONE]` 未出現即視為未完成
 6. Cross-QA 是硬規則：`qa_tool` 不得等於 `last_change_tool`
 7. 例外必須明確記錄並取得用戶確認

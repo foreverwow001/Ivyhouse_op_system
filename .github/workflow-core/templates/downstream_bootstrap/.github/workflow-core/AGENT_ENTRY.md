@@ -55,7 +55,7 @@
 
 ### ===END_READ_BACK_REPORT===
 
-**輸出後必須停下，並以 VS Code `#askQuestions` 等待使用者確認/回覆。** 正式 gate 決策不得改由一般聊天輸入收集；若 `#askQuestions` surface 缺失或失效，必須 fail-closed，明確標記為 workflow environment blocker，並停止進入下一階段。
+**輸出後必須停下，並以 VS Code `#askQuestions` 等待使用者確認/回覆。** 在 Copilot runtime 內，這個 surface 應以 `vscode_askQuestions` 工具實際呼叫。正式 gate 決策不得改由一般聊天輸入收集；若 `#askQuestions` surface 缺失或失效，必須 fail-closed，明確標記為 workflow environment blocker，並停止進入下一階段。
 
 **Bootstrap（新 /dev 任務）**：READ_BACK_REPORT 通過、且 Coordinator 準備進入本次 `/dev` 任務時，必須先建立全新的 context boundary：Engineer 必須在新的 Copilot Chat turn / custom agent mode 中執行，QA 與 Security Reviewer 必須使用新的 one-shot reviewer session，不得重用上一輪聊天或 reviewer session。
 
@@ -71,6 +71,7 @@
 
 1) **互動契約（askQuestions-first）**
 - 所有面向使用者的 Gate 一律使用 VS Code `#askQuestions`。
+- `#askQuestions` 在 Copilot runtime 的對應工具名為 `vscode_askQuestions`；Coordinator 必須先實際呼叫該工具，再可判定 surface 是否缺失、失效或無法承載必要選項。
 - 多個 gate 決策應盡量 batch 成單次或最少次數的 `#askQuestions` 流程，不得要求使用者在一般聊天重貼 prompt 或逐題補填。
 - 一般聊天只允許用來說明 blocker、補充自由文字背景或回報 askQuestions 執行狀態；不得用來收集 formal gate 的 Approve / Scope / Tool / Review 決策。
 - 若 `#askQuestions` surface 缺失、失效或無法承載必要選項，必須 fail-closed 並向使用者明確說明目前是 workflow environment blocker；不得改為一般聊天確認後繼續執行。

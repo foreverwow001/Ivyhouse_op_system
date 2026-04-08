@@ -45,9 +45,11 @@ active workflow artifact 路徑固定為：`doc/implementation_plan_index.md`、
 ## 啟動流程（SPEC_MODE → ORCH_MODE）
 
 ### 1️⃣ SPEC_MODE（任務一開始一定先做）
-回傳「你理解的目標 + 不做清單 + 驗收條件草案」並請求用戶確認（Yes/No）。
+回傳「你理解的目標 + 不做清單 + 驗收條件草案」，並以 batched `#askQuestions` 請求用戶確認。
 
 **未確認前，不進入任何執行、不注入終端。**
+
+> 在 Copilot runtime 內，`#askQuestions` 對應工具名為 `vscode_askQuestions`；只有在實際呼叫失敗時，才可判定 gate surface 不可用。
 
 > `READ_BACK_REPORT` 確認後，先建立 fresh context boundary，再做 Mode Selection Gate；若 user 選 `lightweight-direct-edit`，由 Copilot Chat 直接處理，不進 formal Plan / Engineer / QA / Log 鏈。
 

@@ -17,7 +17,7 @@ Ivy House 共通指令（所有 Agent 必須遵守）
 2. 等待用戶確認
 3. user-facing Gate 預設使用 VS Code `#askQuestions`
 
-一般聊天不可用來收集 formal gate 決策；若 `#askQuestions` surface 缺失或失效，必須 fail-closed，回報 workflow environment blocker。
+一般聊天不可用來收集 formal gate 決策；在 Copilot runtime 內，`#askQuestions` 的對應工具名為 `vscode_askQuestions`，必須先實際呼叫後才可判定 surface 是否缺失或失效。若確認不可用，必須 fail-closed，回報 workflow environment blocker。
 
 ---
 
@@ -105,7 +105,7 @@ QA 工具不得等於 `last_change_tool`
 - **copilot-cli** - Copilot CLI 型終端執行工具
 
 ### 互動工具
-- **VS Code `#askQuestions`** - user-facing Gate 的預設互動工具
+- **VS Code `#askQuestions` / `vscode_askQuestions`** - user-facing Gate 的預設互動工具；前者是 UI surface 名稱，後者是 Copilot runtime 工具呼叫名稱
 
 ### 終端工具
 - **Project Terminal** - 執行 git/bash 指令
