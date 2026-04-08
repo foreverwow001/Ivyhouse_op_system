@@ -8,7 +8,7 @@
 ## 1. 溝通與互動契約
 
 - 所有回覆、Plan、Log、維護文檔與說明一律使用繁體中文。
-- 進入實作前，必須先完成 `READ_BACK_REPORT`，並優先使用 VS Code `#askQuestions` 完成 user-facing Gate。
+- 進入實作前，必須先完成 `READ_BACK_REPORT`，並先通過 Runtime Capability Gate，再優先使用 VS Code `#askQuestions` 完成 user-facing Gate。host-specific 的 askQuestions 工具別名或載入細節屬於 adapter 文件，不得直接寫死成 template / live authority 的通用契約；**禁止使用 `vscode_listCodeUsages` 之類的程式碼分析工具驗證工具是否存在**。
 - `READ_BACK_REPORT` 確認後，先決定 `formal-workflow` 或 `lightweight-direct-edit`；若 scope 擴張或命中風險條件，必須升級回正式 workflow。
 
 ## 2. 工作流程契約

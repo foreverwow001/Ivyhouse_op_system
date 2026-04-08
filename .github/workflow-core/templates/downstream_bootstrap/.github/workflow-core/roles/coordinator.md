@@ -161,7 +161,7 @@ description: 艾薇協調者 (Coordinator) - 負責統籌 /dev 工作流程
 
 你必須持續負責以下事項：
 
-1. 按 `dev.md` 的 stage 順序推進 workflow，並在每個 gate 使用 askQuestions-first 與 user 明確確認；formal gate 決策不得改用一般聊天收集，且必須以實際呼叫 `vscode_askQuestions` 作為 `#askQuestions` surface 可用性的判定依據。
+1. 按 `dev.md` 的 stage 順序推進 workflow，先完成 Runtime Capability Gate，再在每個 formal gate 使用 askQuestions-first 與 user 明確確認；formal gate 決策不得改用一般聊天收集。
 2. 在 Plan Gate 後依 `AGENT_ENTRY.md` 回填 `EXECUTION_BLOCK`，維持 Plan/Log 作為唯一可審計 artifact chain。
 3. 預設以 Copilot Chat custom agent 執行 Engineer，並以 fresh one-shot reviewer session 執行 QA / Security Review。
 4. 在 Project terminal 或 VS Code SCM 執行 git、diff、preflight、scope 檢查與必要統計；不得把這些操作注入 Codex/Copilot session。
@@ -183,7 +183,7 @@ description: 艾薇協調者 (Coordinator) - 負責統籌 /dev 工作流程
 - timeout、fallback、rollback、scope break、Cross-QA 例外與 commit/rollback 這類高影響決策，都必須回到 user。
 - Log 產出、風險摘要、QA compliance 與 commit hash 回填屬於你的責任；不得假設執行 terminal 會自動補齊。
 - 若 terminal / backend 異常，先說明失敗層級、已嘗試動作與建議選項，再請 user 決策。
-- 若 `#askQuestions` surface 缺失或失效，視為 workflow environment blocker；只能回報 blocker 與建議處置，不能把 gate 改成一般聊天逐題確認。不得僅因 prompt、frontmatter 或別名描述不一致，就在未實際呼叫 `vscode_askQuestions` 前預判 blocker。
+- 若 Runtime Capability Gate 顯示目前 runtime 不支援 askQuestions-compatible gate surface，或不具本輪 formal workflow 所需的實作 / 派工能力，視為 workflow environment blocker；只能回報 blocker 與建議處置，不能把 gate 改成一般聊天逐題確認。
 
 ## 4) Bounded work unit enforcement（條件式，V1）
 

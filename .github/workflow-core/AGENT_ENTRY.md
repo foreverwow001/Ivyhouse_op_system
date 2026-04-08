@@ -55,7 +55,7 @@
 
 ### ===END_READ_BACK_REPORT===
 
-**輸出後必須停下，並以 VS Code `#askQuestions` 等待使用者確認/回覆。** 在 Copilot runtime 內，這個 surface 應以 `vscode_askQuestions` 工具實際呼叫。正式 gate 決策不得改由一般聊天輸入收集；若 `#askQuestions` surface 缺失或失效，必須 fail-closed，明確標記為 workflow environment blocker，並停止進入下一階段。
+**輸出後必須停下，並先完成 Runtime Capability Gate。** 若目前 runtime 已提供相容於 VS Code `#askQuestions` 的 gate surface，才可用該 surface 等待使用者確認/回覆；正式 gate 決策不得改由一般聊天輸入收集。若目前 runtime 缺少 askQuestions-compatible gate surface，或本輪 formal workflow 所需的實作 / 派工能力，必須 fail-closed，明確標記為 workflow environment blocker，並停止進入下一階段。
 
 **Bootstrap（新 /dev 任務）**：READ_BACK_REPORT 通過、且 Coordinator 準備進入本次 `/dev` 任務時，必須先建立全新的 context boundary：Engineer 必須在新的 Copilot Chat turn / custom agent mode 中執行，QA 與 Security Reviewer 必須使用新的 one-shot reviewer session，不得重用上一輪聊天或 reviewer session。
 
@@ -69,9 +69,18 @@
 
 在使用者確認 READ_BACK_REPORT 後，才可依序執行：
 
+0) **Runtime Capability Gate（非 user-facing formal gate）**
+- Coordinator 必須先確認目前 runtime 是否提供：
+  - 相容於 VS Code `#askQuestions` 的 user-facing gate surface
+  - 若本輪要進入 `formal-workflow`，足以完成派工或實作的受支援能力面
+- 這個 capability check 必須以「目前 runtime 實際可用的工具面」為準，不得以文件存在、字串搜尋結果或程式碼符號查詢代替。
+- host-specific 的工具別名、載入機制或 deferred-tool 規則屬於 adapter 文件責任，不屬於本 live authority contract。
+- 若 capability check 失敗，Coordinator 必須在進入第一個 user-facing formal gate 前就 fail-closed，回報 unsupported runtime / workflow environment blocker。
+
 1) **互動契約（askQuestions-first）**
 - 所有面向使用者的 Gate 一律使用 VS Code `#askQuestions`。
-- `#askQuestions` 在 Copilot runtime 的對應工具名為 `vscode_askQuestions`；Coordinator 必須先實際呼叫該工具，再可判定 surface 是否缺失、失效或無法承載必要選項。
+- 在 Copilot / VS Code runtime 內，`#askQuestions` 常見會映射到 `vscode_askQuestions`；但實際工具別名與載入方式應以當前 host runtime 的 adapter 文件與已註冊工具面為準，不得把單一 host 的載入細節寫死成通用契約。
+- **嚴格禁止**：使用 `vscode_listCodeUsages`、`grep_search`、`semantic_search`、`file_search` 等程式碼分析工具查詢或驗證 askQuestions 工具是否存在；這些工具只能分析程式碼或檔案，不代表目前 runtime 的實際工具能力。
 - 多個 gate 決策應盡量 batch 成單次或最少次數的 `#askQuestions` 流程，不得要求使用者在一般聊天重貼 prompt 或逐題補填。
 - 一般聊天只允許用來說明 blocker、補充自由文字背景或回報 askQuestions 執行狀態；不得用來收集 formal gate 的 Approve / Scope / Tool / Review 決策。
 - 若 `#askQuestions` surface 缺失、失效或無法承載必要選項，必須 fail-closed 並向使用者明確說明目前是 workflow environment blocker；不得改為一般聊天確認後繼續執行。

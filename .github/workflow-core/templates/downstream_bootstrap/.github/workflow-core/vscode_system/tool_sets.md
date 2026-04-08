@@ -17,7 +17,7 @@ Ivy House 共通指令（所有 Agent 必須遵守）
 2. 等待用戶確認
 3. user-facing Gate 預設使用 VS Code `#askQuestions`
 
-一般聊天不可用來收集 formal gate 決策；在 Copilot runtime 內，`#askQuestions` 的對應工具名為 `vscode_askQuestions`，必須先實際呼叫後才可判定 surface 是否缺失或失效。若確認不可用，必須 fail-closed，回報 workflow environment blocker。
+一般聊天不可用來收集 formal gate 決策；在 VS Code / Copilot runtime 內，應先完成 Runtime Capability Gate，再使用當前 runtime 已註冊的 askQuestions surface。若確認不可用，必須 fail-closed，回報 workflow environment blocker。
 
 ---
 
@@ -105,7 +105,13 @@ QA 工具不得等於 `last_change_tool`
 - **copilot-cli** - Copilot CLI 型終端執行工具
 
 ### 互動工具
-- **VS Code `#askQuestions` / `vscode_askQuestions`** - user-facing Gate 的預設互動工具；前者是 UI surface 名稱，後者是 Copilot runtime 工具呼叫名稱
+- **VS Code `#askQuestions` / `vscode_askQuestions`** - user-facing Gate 的預設互動工具；前者是 UI surface 名稱，後者是本 workspace 常見的 Copilot runtime 工具呼叫名稱
+
+### Runtime Capability Gate（VS Code adapter）
+- 進入第一個 formal gate 前，先確認目前 runtime 已註冊 askQuestions-compatible tool。
+- 在這個 workspace 的目前 host runtime 中，若工具直接出現在可呼叫列表，應直接以標準 function call 方式使用 `vscode_askQuestions`。
+- 若未來某個 VS Code host runtime 採用延遲載入機制，應以該 host runtime 實際提供的載入方式為準；不得把單一載入方式回寫成 repo-wide live contract。
+- **絕對禁止**用 `vscode_listCodeUsages` 或其他程式碼搜尋工具查詢 askQuestions 工具是否存在；它們無法反映 runtime 的真實工具能力。
 
 ### 終端工具
 - **Project Terminal** - 執行 git/bash 指令
