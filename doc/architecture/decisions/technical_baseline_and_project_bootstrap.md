@@ -1,6 +1,6 @@
 # 技術基線與專案 Bootstrap 第一版
 
-更新日期：2026-04-03
+更新日期：2026-04-08
 
 Authoritative source：是
 
@@ -21,10 +21,13 @@ Authoritative source：是
 
 - Backend：TypeScript + NestJS
 - Frontend / Client：Next.js + React + TypeScript
-- Database：PostgreSQL
+- Database engine：PostgreSQL
+- Database provider baseline：Supabase PostgreSQL（中短期 3-5 年正式首選）
 - ORM / migration：Prisma + Prisma Migrate
-- Deployment：容器化部署；開發環境以 Docker Compose 為主，正式環境暫定 Cloud Run + 託管 PostgreSQL
+- Deployment / edge / release path：GitHub + GitHub Actions、Cloud Run、Cloudflare；開發環境以 Docker Compose 為主
 - Observability：結構化 JSON logging、request id / job id、audit log、OpenTelemetry traces、Sentry 與 Prometheus / Grafana 或等價託管服務
+
+正式 deploy 方向收斂為 GitHub + Cloud Run + Cloudflare + Supabase PostgreSQL。Cloud SQL 保留為未來在明確條件成立時的重評選項，不是現階段 baseline；營運模式與 provider 重評條件以 [營運模式與正式資料庫 Provider 基線](./operating_mode_and_database_provider_baseline.md) 為準。
 
 以上技術基線以 `project_rules.md` 為最高優先權威來源；本文件負責把 repo 現況與 bootstrap 邊界收斂成可執行基線。
 

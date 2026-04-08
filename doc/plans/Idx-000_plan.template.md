@@ -6,6 +6,9 @@
 **Phase**: [Phase 0 | Phase 1 | Phase 2 | ...]
 **Primary Module**: [Portal | Master Data | Procurement | Inventory | Production | Order / Fulfillment | Finance / Reconciliation | Analytics]
 **Work Type**: [governance | specification | implementation | bugfix | migration | integration]
+**Operating Mode**: [internal-testing | single-operator-production | cross-mode-governance]
+
+> `Operating Mode` 用來標示本輪任務適用的正式營運層級。若文件同時覆蓋兩種模式，應使用 `cross-mode-governance`，並在目標段落寫清楚適用範圍。
 
 ---
 
@@ -215,6 +218,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+operating_mode: [internal-testing|single-operator-production|cross-mode-governance]
 plan_created: [YYYY-MM-DD HH:mm:ss]
 plan_approved: [YYYY-MM-DD HH:mm:ss]
 scope_policy: [strict|flexible]

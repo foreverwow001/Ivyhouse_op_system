@@ -1,6 +1,6 @@
 # Ivyhouse OP System 專案總覽
 
-更新日期：2026-04-01
+更新日期：2026-04-08
 
 Authoritative source：是
 
@@ -15,6 +15,12 @@ Authoritative source：是
 Ivyhouse OP System 是一套烘焙營運管理系統的 web application。
 
 它不是展示型網站，不是單一報表工具，也不是只處理記帳、庫存或生產其中一段的局部工具。它的目標是以單一系統支撐門市營運、採購、庫存、生產、包裝、出貨、財務與管理決策，並把跨部門資料流收斂到同一套正式主資料、流程狀態與權限邊界之上。
+
+## 營運模式定位
+
+本專案正式採納兩種 operating mode：`內部測試模式` 與 `單人營運正式層`。前者服務於內部驗證、流程演練與受控資料操作；後者服務於只有一位管理者的正式營運情境，但仍屬正式系統而非 demo、試算表或臨時工具。
+
+這代表 Ivyhouse OP System 近期的產品與營運定位，不是直接以多管理員企業 production 為唯一假設，而是先把單人營運正式層所需的固定 deploy 路徑、rollback、audit trail、secrets 管理與 managed backup 做穩。模式定義、provider 選擇與後續引用規則以 [營運模式與正式資料庫 Provider 基線](./decisions/operating_mode_and_database_provider_baseline.md) 為準。
 
 ## 最終目標
 

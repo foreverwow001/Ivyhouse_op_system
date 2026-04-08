@@ -12,6 +12,7 @@
 ## 目前已採納的總覽入口
 
 - `project_overview.md`：專案級總覽，定義最終產品目標、核心營運主線、模組地圖與分期策略
+- `decisions/operating_mode_and_database_provider_baseline.md`：正式採納 `內部測試模式`、`單人營運正式層` 與中短期資料庫 provider 基線，供 plan / log / decision 共用引用
 - `phase1_mvp_scope.md`：正式採納的 Phase 1 MVP 範圍、包含 / 排除項與驗收基線
 - `phase1_mvp_three_phase_execution_plan.md`：把目前 MVP 收尾工作拆成三個 phase 與 `Idx-011` ~ `Idx-018` work unit 的正式執行版
 - `project_blueprint_alignment_draft.md`：藍圖與現況對照草案，用於追蹤產品藍圖缺口，不取代正式總覽文件

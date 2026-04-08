@@ -7,6 +7,7 @@
 - 若某項決策已在此文件明確採納，後續規格與實作不得自行推翻。
 - 若本輪需求需要推翻、擴充或例外化既有決策，應先新增 ADR 或更新本文件，再進入實作。
 - 若 repo 內其他文件與本文件衝突，以較新的正式 ADR 為準；若尚無 ADR，則以本文件為準。
+- 涉及 operating mode、正式 deploy 層級或資料庫 provider 選型時，應先引用 `operating_mode_and_database_provider_baseline.md`，再決定是否需要新增例外或重評決策。
 
 ## 已採納決策
 
@@ -127,6 +128,8 @@
 
 ## 已掛載補充文件
 
+- `operating_mode_and_database_provider_baseline.md`：正式採納 `內部測試模式`、`單人營運正式層`、中短期 `Supabase PostgreSQL` provider 基線與後續引用規則
 - `technical_baseline_and_project_bootstrap.md`：收斂正式技術棧、workspace / bootstrap 邊界、repo 現況骨架與 deferred 缺口，供 `Idx-007` 與後續 deploy / frontend / observability work unit 引用
+- `ci_and_env_governance_baseline.md`：收斂 CI、環境變數、release-preflight 與 operating mode 最低環境治理線；涉及 deploy / secrets / sign-off 時應搭配 `operating_mode_and_database_provider_baseline.md` 一併閱讀
 
 在這些 ADR 尚未拆出前，本文件就是 Ivyhouse OP System 的架構決策最低權威來源。
