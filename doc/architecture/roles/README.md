@@ -257,6 +257,32 @@ Phase 1 補充：`銷售渠道`、`商品映射規則`、`渠道時效 / cutoff 
 - 這兩張表本輪不新增 `核定人` 欄位。
 - 其 approval boundary 以本文件的主檔 maker-checker 定義為準，待後續若主資料模型擴充審計欄位，再決定是否落地到 CSV / schema。
 
+## Release Assignment Labels（Idx-035）
+
+- `Release owner`、`Release operator` 是 `release-preflight` 與相鄰 release readback 的 assignment label，不是新的 app RBAC 正式角色。
+- 這兩個 label 只用於 release 指派、audit 留痕與責任界定，不取代本文件既有的正式角色矩陣，也不得形成第二套平行角色模型。
+- staging `release-preflight` 只能由被指派的 `Release operator` 觸發；`Backend owner` 可以協助 artifact / readback 判讀，但除非同時被正式指派，否則不自動取得 trigger authority。
+- production `release-preflight` 只能由被指派的 `Release owner` 觸發；`管理員`、`系統管理` 或其他一般維運身份不得被寫成自動放行來源。
+- 在 `single-operator-production` 下，同一人可同時承擔 `Release owner`、`Release operator` 與相鄰支援責任，但每次實際觸發仍必須保留 acting assignment、操作者與時間點留痕。
+
+### Release assignment 最小留痕欄位
+
+每次 `release-preflight` 前，release assignment 記錄至少要保留下列欄位，缺任一欄都不得視為 assignment 已正式成立：
+
+| 欄位 | 最低要求 |
+|------|----------|
+| `指派人` | 誰做出本次 release assignment 決定；必須可追溯到正式責任來源 |
+| `被指派人` | 實際承擔本次 acting assignment 的人；不得只寫角色名而無人員對應 |
+| `目標環境` | `staging` 或 `production`；不得留空或用模糊描述 |
+| `有效範圍` | assignment 只涵蓋哪個 release 視窗或哪個操作面，例如 `release-preflight trigger`、`artifact/readback support` |
+| `時間戳` | assignment 建立或最後確認的時間點；需能對齊 release pack、值班單或等價 artifact |
+
+### Production fail-closed 條件
+
+- production `release-preflight` 若找不到完整 release assignment 記錄，或記錄中的 `目標環境`、`有效範圍`、`被指派人` 與實際操作不一致，則 `Release owner` assignment 不成立，必須 fail-closed。
+- production `release-preflight` 若 backup / restore checklist 任一必填欄位未完整，即使已有 `Release owner` assignment，也不得按下。
+- `Backend owner`、`管理員`、`系統管理` 或其他一般維運身份若未被正式指派為本次 `Release owner`，不得以支援判讀、系統存取或 GitHub surface 可見性取代正式 assignment。
+
 ## 限制與待補事項
 
 - 本版是角色層級，不是人員層級；後續若有正式人員任命或部門對應，再往下擴充。

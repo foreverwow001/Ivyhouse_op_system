@@ -37,7 +37,34 @@ Authoritative source：是
 
 只要 external infra owner 尚未在 sign-off checklist 補齊必填欄位，production release 仍必須 fail-closed。
 
-### 2. 固定 deploy path 是正式最低線
+### 2. `release-preflight` 的 authorized actor boundary 是正式 gate，不是一般操作權
+
+`Release owner`、`Release operator` 在本 contract 中都是 release assignment label，不是新的 app RBAC 正式角色。
+
+單人營運正式層的 `release-preflight` 只能依以下邊界操作：
+
+| 目標環境 | 可觸發者 | 可支援判讀者 | 不成立時處置 |
+|---|---|---|---|
+| staging | 被指派的 `Release operator` | `Backend owner` 可協助 artifact / readback 判讀 | 若無明確 assignment、target environment 判定不清、或 release assignment 記錄不完整，則不得觸發 |
+| production | 被指派的 `Release owner` | `Backend owner` 可協助 artifact / readback 判讀；DBA / Platform owner 只提供 backup / restore 事實證據 | 若無明確 assignment、release assignment 記錄不完整、acting responsibility 未留痕、或 backup / restore checklist 未完整，則不得觸發 |
+
+補充原則如下：
+
+- `Backend owner` 的角色是判讀支援，不自動等於 trigger authority。
+- `管理員`、`系統管理` 或其他一般維運身份不得被視為 production trigger 的自動放行來源。
+- 在 `single-operator-production` 下，同一人可同時承擔多個 assignment，但仍必須在 release pack、artifact 或 log 中留下 acting assignment 與責任留痕。
+
+`Release assignment` 記錄至少要包含下列欄位：
+
+- `指派人`
+- `被指派人`
+- `目標環境`
+- `有效範圍`
+- `時間戳`
+
+若以上欄位缺失、與本次 target environment 不一致、或無法對齊 release pack / 值班單 / artifact，則 authorized actor boundary 不成立，`release-preflight` 必須 fail-closed。
+
+### 3. 固定 deploy path 是正式最低線
 
 單人營運正式層只允許以下固定正式路徑：
 
@@ -59,7 +86,7 @@ Authoritative source：是
 - 以 `psql` 或手動 SQL 改寫 migration history，卻不回到正式 migration governance
 - 跳過 `release-preflight` 或 formal env preflight 直接 promote
 
-### 3. Backup / Restore 的最小 contract 是 provider-managed + external owner fail-closed
+### 4. Backup / Restore 的最小 contract 是 provider-managed + external owner fail-closed
 
 在單人營運正式層，正式備份能力允許依賴 provider-managed backup，不要求 repo 先自建完整 backup orchestration。
 
@@ -84,7 +111,9 @@ fail-closed 的最低效果如下：
 - 不得把 `Idx-024` 從 `QA` 視為已解除 external infra blocker
 - 不得以「provider 應該有備份」取代實際 readback 與 owner sign-off
 
-### 4. Rollback 的最小 contract 是「停等、回退應用版本、修正後重跑」，不是資料通用回滾
+production 的 `release-preflight` 觸發前，backup / restore checklist 必須已完整；這個限制發生在按下前，而不是等到 promote 時才補救。
+
+### 5. Rollback 的最小 contract 是「停等、回退應用版本、修正後重跑」，不是資料通用回滾
 
 目前 Phase 1 沒有通用 destructive rollback API。這是正式限制，不得在任何 plan / log / runbook 中被淡化。
 
@@ -101,15 +130,16 @@ fail-closed 的最低效果如下：
 - 把 application revision 回退誤寫成資料庫已完成回復
 - 在沒有 rehearsal evidence 與 owner sign-off 前，假設 destructive restore 可即時執行
 
-### 5. 停等點必須與既有 authority 對齊
+### 6. 停等點必須與既有 authority 對齊
 
 正式 release 或事故處置至少要遵守以下停等點：
 
 | 停等點 | 何時停 | 正式處置 |
 |---|---|---|
+| authorized actor boundary 不成立 | `release-preflight` 前 | 停止 release，先確認 assignment 與 acting responsibility，再重跑 |
 | environment bindings 缺失 | `release-preflight` 前或過程中 | 停止 release，先補 bindings，再重跑 preflight |
 | migration preflight 有 pending / unexpected / failed 狀態 | formal env preflight readback 時 | 停在 migration governance，修正後再 replay / promote |
-| backup / restore 必填欄位未補齊 | production promote 前 | 停止 production release，維持 external infra blocker |
+| backup / restore 必填欄位未補齊 | production `release-preflight` 前 | 停止 production release，維持 external infra blocker |
 | 應用 deploy 後 smoke / readiness 不成立 | promote 後、切流前 | 回到前一個已知良好的 app revision，保留 evidence 後修正 |
 | 營運窗口已開啟但資料流程失敗 | opening balance / intake / rerun 執行中 | 依既有 runbook cancel window、保留原因、重新開窗或 rerun |
 
@@ -124,6 +154,7 @@ fail-closed 的最低效果如下：
 ### Audit
 
 - 正式 release 至少要留下 GitHub Actions `release-preflight` 的 artifact / log readback
+- 正式 release 的 readback 應可追溯本次 acting assignment 是 `Release operator` 或 `Release owner`
 - 若進入正式 promote，應可追溯 target environment、操作者、時間點與對應 release 載體
 - 若因 backup / restore 或 rollback 停等而中止，必須保留中止原因與對應 evidence 位置
 - 任何 hotfix、replay、revision 或 rerun 若影響正式層，都必須回指既有 migration governance 或 ops runbook，不得只留口頭描述
