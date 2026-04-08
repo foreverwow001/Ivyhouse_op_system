@@ -44,10 +44,10 @@ jobs:
       NEXT_PUBLIC_PORTAL_API_BASE_URL: http://127.0.0.1:3000/api
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
@@ -99,14 +99,14 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: ${{ inputs.target_environment == 'staging' && vars.DATABASE_URL || secrets.DATABASE_URL }}
-      ADMIN_DATABASE_URL: ${{ inputs.target_environment == 'staging' && vars.ADMIN_DATABASE_URL || secrets.ADMIN_DATABASE_URL }}
+      ADMIN_DATABASE_URL: ${{ inputs.target_environment == 'production' && secrets.ADMIN_DATABASE_URL || '' }}
       NEXT_PUBLIC_PORTAL_API_BASE_URL: ${{ vars.NEXT_PUBLIC_PORTAL_API_BASE_URL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
@@ -124,7 +124,13 @@ jobs:
           set -e
           missing=0
 
-          for key in DATABASE_URL ADMIN_DATABASE_URL NEXT_PUBLIC_PORTAL_API_BASE_URL; do
+          required_keys="DATABASE_URL NEXT_PUBLIC_PORTAL_API_BASE_URL"
+
+          if [ "$TARGET_ENVIRONMENT" = "production" ]; then
+            required_keys="$required_keys ADMIN_DATABASE_URL"
+          fi
+
+          for key in $required_keys; do
             if [ -z "${!key}" ]; then
               echo "::error::${TARGET_ENVIRONMENT} 缺少 required binding: ${key}"
               missing=1
@@ -144,7 +150,7 @@ jobs:
         run: npm run preflight:formal-env
 
       - name: Upload migration preflight report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: migration-preflight-${{ inputs.target_environment }}
           path: apps/api/migration-preflight-report.json
