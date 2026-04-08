@@ -179,6 +179,10 @@ Ivyhouse OP System 的主線不是單一 CRUD，而是以下閉環：
 - `doc/architecture/flows/inventory_count_api_contract.md`：把盤點 session、差異調整、差異摘要與 7 天 / 30 天滾動誤差率落成 API / DTO / response 草案
 - `doc/architecture/flows/daily_ops_engineering_breakdown.md`：把日常扣帳、回填、盤點與三張表 owner 邊界拆成工程可落地的資料表 / API / 狀態事件清單
 - `doc/architecture/flows/daily_ops_seed_bootstrap_strategy.md`：定義日常營運 MVP 的 migration 套用、seed 邊界、開帳庫存 bootstrap 與第一批正式資料進場策略
+- `doc/architecture/flows/post_launch_edge_path_matrix.md`：彙整 go-live 後 opening balance、production-planning、inventory-count、intake、ledger 與 hosted preflight 的高風險邊界場景矩陣、owner 與 evidence 分類
+- `doc/architecture/flows/post_launch_ops_runbook.md`：把 hosted release-preflight readback、backup / restore responsibility matrix、health / readiness contract 與 escalation / rollback tree 收斂成值班入口
+- `doc/architecture/flows/production_backup_restore_signoff_checklist.md`：提供 external infra owner 在 production cutover 前回填 backup 工具、restore rehearsal、RTO/RPO 與最終 sign-off 的 fail-closed checklist
+- `doc/architecture/flows/post_launch_operator_handbook_zh_tw.md`：提供 intake、daily ops、release-preflight 與 rollback 的繁中操作手冊與值班交接清單
 - `doc/architecture/flows/migration_governance_and_deployment_replay.md`：定義 migration 命名 / promotion / review 規則、deployment replay evidence 與 hotfix rollback 停等點
 - `doc/architecture/flows/finance_reconciliation_control_baseline.md`：定義發票、收付款、核銷、成本、對帳、關帳的控制邊界、高風險審核點，以及對現行 Phase 1 的 deferred / future gate 判定
 

@@ -29,13 +29,15 @@
 | Idx-021 | Inventory-count / Production-planning 正式 auth 與 maker-checker 補強 | Phase 1 | Completed | Idx-013, Idx-015, Idx-016, Idx-017 | 正式身份驗證承接、inventory-count / production-planning 角色邊界終版、approval skeleton、maker-checker 路徑 | 已完成第一個正式實作切片：Portal session principal 已取代過渡身份來源，inventory-count approval skeleton 已落地，production-planning 已切至 principal 驅動；殘餘角色邊界風險轉交 sign-off 管理 |
 | Idx-022 | Production-planning 完整 approval persistence 與 approver boundary 收斂 | Phase 1 | Completed | Idx-018, Idx-021 | production-planning approval persistence、plan/rerun 決策端點、`管理員` 最終 approver 邊界收斂、deploy preflight evidence | 已完成 production-planning maker-checker persistence、admin-only approver 邊界收斂、本機 / 測試叢集 deploy preflight 與 readback evidence；殘餘 revision 鏈長與 admin+supervisor 交集政策列為後續治理 |
 | Idx-023 | Go-Live Blocker 收斂：前端骨架、CI/CD、環境治理、主資料完整化與正式環境 Preflight | Phase 1 → Go-Live | Completed | Idx-018, Idx-022 | 前端 Portal UI、CI/CD Pipeline、環境變數與密鑰治理、主資料升格、正式環境 migration preflight、production-planning approval 完化 | 已完成 Slice 1-7：Portal workbench、CI/env governance、主資料 active surface、read-only migration preflight、scratch DB replay drill、QA/security review、one-shot reviewer wrapper，並補齊 GitHub-hosted `release-preflight` artifact evidence |
-| Idx-024 | Go-Live 後高風險補強：E2E 場景擴充、運維預案與用戶操作手冊 | Phase 1 → Post-Launch | In Progress | Idx-023 | E2E 邊界場景測試、正式環境運維預案、中文版用戶操作手冊 | 已啟動 planning refinement，優先整理 E2E 邊界場景矩陣與運維預案；用戶手冊保留後續 slice |
+| Idx-024 | Go-Live 後高風險補強：E2E 場景擴充、運維預案與用戶操作手冊 | Phase 1 → Post-Launch | QA | Idx-023, Idx-032 | E2E 邊界場景測試、正式環境運維預案、中文版用戶操作手冊 | 三個 slices 與最小 executable evidence 已交付；QA 與 Security reviewer 已完成條件通過，尚待 reviewer tooling 修復後的 Domain reviewer 可用結論與 external infra backup/restore sign-off |
 | Idx-025 | 漸進補強：測試深化、Observability、Opening Balance 擴張與效能基準 | Phase 2 | Planning | Idx-023, Idx-024 | 後端單元測試、Logging & Observability、多窗口/多倉 opening balance、效能基準、前端品質 | 將 Phase 1 MVP 從「可用」推進到「可持續維護與擴張」；承接 Idx-020 deferred |
 | Idx-026 | Repo-local UI/UX skill family 建置：品牌 style、入口頁、流程 landing、2.5D icon 與前端互動狀態 | Phase 1 → Go-Live Support | Completed | Idx-023 | `.agent/skills_local/` UI/UX skills、local overlay catalog、skill references、Portal 前端實作 guardrail | 已完成 repo-local UI/UX skill family 第一版與 overlay catalog，供 `Idx-023` 的 login / landing / theme / icon / UI states 前端切片直接使用 |
 | Idx-027 | Workflow 修正切片：UI/UX local skills 自動載入鏈與 PTY formal execution 強制收斂 | Phase 1 → Go-Live Support | Completed | Idx-026 | skills trigger checklist、Coordinator/Engineer 注入規則、PTY execution enforcement、最小 smoke 驗證 | 已補建 project-local authoritative trigger checklist、Coordinator PTY contract 與 formal execution 後驗證條文；preflight 與 strict PTY evidence check 皆通過，可作為 `Idx-023` 前端切片的 workflow 基座 |
 | Idx-028 | Idx-023 Slice 1：Portal app scaffold、login page 與 landing shell | Phase 1 → Go-Live | Completed | Idx-026, Idx-027 | Next.js Portal app skeleton、login page、landing shell、workspace scripts、PTY formal execution evidence | 已完成最小前端切片：Portal workspace app、品牌化 login shell、流程導向 landing shell 與 `build:portal` 驗證均已落地；後續由 `Idx-023` 承接其餘 go-live blocker 面 |
 | Idx-029 | Workflow-core 升版與 cutover 計畫：由 `.agent` PTY-primary 遷移到 `.github/workflow-core` Chat-primary | Phase 1 → Workflow Upgrade | Completed | Idx-027, Idx-028 | phased cutover plan、bootstrap refresh checklist、檔案 ownership migration matrix、驗證與 rollback gates | 已完成主計畫、Phase 0-5 supporting plans、Phase 0 ownership/inventory、Phase 1 staged root `.github` bootstrap refresh、Phase 2 canonical core + mutable root scaffold、Phase 3 local overlay split/move、Phase 4 live authority cutover + `.agent/**` shim 收斂，以及 Phase 5 verify / smoke / sign-off；最終結論已收斂為 `PASS`，完整證據與 `.agent/` 後續刪除判定記錄於 `doc/logs/Idx-029_phase-5_log.md` |
 | Idx-030 | `.agent` 刪除前置作業：legacy surface 退役、canonical 去耦與刪除前驗證 | Phase 1 → Workflow Upgrade Follow-up | Completed | Idx-029 | pre-delete inventory、canonical de-coupling、legacy retirement prep、delete-readiness evidence | 已完成 `.agent` 刪除前置盤點、canonical/live surface 去耦、root `.github/**` compatibility promise 收斂、`.agent/` 實體刪除，以及刪除後原 workspace 與 no-agent 臨時副本的 reviewer preflight、portable smoke、sync precheck / verify、guard、build 與 API smoke；最終結論為 `.agent/` 已完成安全退場 |
+| Idx-031 | AskQuestions-first fail-closed workflow hardening | Phase 1 → Workflow Hardening | Completed | Idx-029, Idx-030 | `#askQuestions` fail-closed gate contract、batched confirmation rules、downstream template sync | 已修正 live authority 與 downstream bootstrap template，正式禁止以一般聊天收集 formal gate 決策；若 askQuestions surface 缺失，視為 workflow environment blocker |
+| Idx-032 | Reviewer CLI behavioral hardening 與 Domain reviewer contract 補強 | Phase 1 → Workflow Hardening | In Progress | Idx-029, Idx-031 | reviewer wrapper behavioral fail-closed、preflight behavioral smoke、Domain reviewer role/package contract、Domain reviewer 可採信輸出 | 已定位根因：preflight 只做靜態存在檢查、wrapper 未支援正式 Domain role、one-shot 輸出完整性未驗證；本輪先正式登記 work unit 並補齊 package contract，後續交由 Engineer 修復 runtime tooling |
 
 ## 依賴語意
 
@@ -54,8 +56,9 @@
 ### 下一階段
 
 3. **Idx-023（Tier 1 Blocker）**：go-live 前必須完成。關鍵路徑為前端 Portal UI；`Idx-028` 已交付其第一個最小切片，後續再擴到 intake / daily ops / CI/CD / env / master data 等 blocker 面。
-4. **Idx-024（Tier 2 High Risk）**：已啟動。優先補 E2E 邊界場景矩陣、運維預案與 hosted preflight readback 導引，最後再收手冊。
-5. **Idx-025（Tier 3 Progressive）**：待 `Idx-024` 收斂後再啟動。測試深化、Observability、多窗口 opening balance、效能基準。
+4. **Idx-024（Tier 2 High Risk）**：review 收口中。三個 slices 已完成；剩餘阻斷為 `Idx-032` reviewer tooling 修復後的 Domain reviewer 可用結論，以及 production backup/restore 外部 sign-off。
+5. **Idx-032（Tier 2 Workflow Hardening）**：已啟動。先修 reviewer wrapper / preflight 的 behavioral fail-closed 與 Domain contract，再回頭關閉 `Idx-024` blocker。
+6. **Idx-025（Tier 3 Progressive）**：待 `Idx-024` 收斂後再啟動。測試深化、Observability、多窗口 opening balance、效能基準。
 
 ## 狀態說明
 
@@ -78,12 +81,12 @@
 
 ## 統計資訊
 
-總任務數：30
+總任務數：32
 - Approved：0
-- Planning：2
+- Planning：1
 - In Progress：1
-- QA：0
-- Completed：27
+- QA：1
+- Completed：29
 
 ## 任務編號規則
 

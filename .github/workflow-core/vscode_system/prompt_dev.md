@@ -35,7 +35,7 @@
 3. **驗收條件草案**（逐條）
 4. **是否需要 Expert Review**（Yes/No）
 
-並等待確認後再進入執行。
+並以 batched `#askQuestions` 等待確認後再進入執行；不得把 formal gate 改成一般聊天補填。
 
 若 `READ_BACK_REPORT` 已通過、且準備進入正式 `/dev` 任務，先建立 fresh context boundary：Engineer 使用新的 Copilot Chat turn / custom agent mode，reviewer 使用新的 one-shot reviewer session，再進 Mode Selection Gate / Plan。
 

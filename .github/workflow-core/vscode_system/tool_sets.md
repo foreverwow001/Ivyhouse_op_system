@@ -17,7 +17,7 @@ Ivy House 共通指令（所有 Agent 必須遵守）
 2. 等待用戶確認
 3. user-facing Gate 預設使用 VS Code `#askQuestions`
 
-只有在工具不可用、需要自由文字理由、或選項不足時，才可退回一般聊天輸入。
+一般聊天不可用來收集 formal gate 決策；若 `#askQuestions` surface 缺失或失效，必須 fail-closed，回報 workflow environment blocker。
 
 ---
 
@@ -141,7 +141,7 @@ QA 工具不得等於 `last_change_tool`
 1. **SPEC_MODE**：Coordinator 複述需求並等待確認
 2. **READ_BACK_REPORT + Bootstrap + Mode Selection Gate**：先建立 fresh context boundary，再決定 `formal-workflow` 或 `lightweight-direct-edit`
 3. **Plan 產出**：若為 formal workflow，要求 Planner 產出 `doc/plans/Idx-XXX_plan.md`
-4. **Plan 確認**：以 `#askQuestions` 為主收集 Approve / Scope / Tool 決策
+4. **Plan 確認**：以 batched `#askQuestions` 收集 Approve / Scope / Tool 決策；不得要求使用者在一般聊天重貼 gate prompt
 5. **ORCH_MODE**：記錄 `executor_tool`、`security_reviewer_tool`（條件式）、`qa_tool` 並開始執行
 6. **Reviewer / 驗證操作**：使用 reviewer CLI 與 targeted checks 作為審查與完成證據
 7. **完成判定**：以 handoff package、reviewer output 與 Log 回填判定是否完成

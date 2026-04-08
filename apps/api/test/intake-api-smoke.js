@@ -195,6 +195,25 @@ async function runFixture(fixture) {
   assert.equal(parsedLines.total, fixture.expectedCount, `${fixture.fileName} parsed-lines total 不符`);
   assert.equal(exceptions.items.length, fixture.expectedExceptionCount, `${fixture.fileName} exception 數量不符`);
 
+  if (fixture.expectedExceptionCount > 0) {
+    const confirmError = await expectHttpErrorJson(
+      `/api/intake/batches/${batch.intakeBatchId}/confirm`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          confirmationNote: 'smoke should reject unresolved exceptions',
+          expectedExceptionCount: 0,
+          confirmedBy: 'fixture-test',
+        }),
+      },
+      409,
+    );
+
+    assert.equal(confirmError.errorCode, 'INTAKE_BATCH_HAS_OPEN_EXCEPTIONS');
+    assert.equal(confirmError.details.openExceptionCount, fixture.expectedExceptionCount);
+  }
+
   for (const expectedProduct of fixture.expectedProducts) {
     assert.ok(
       normalizedProducts.some((product) => product.includes(normalizeText(expectedProduct))),
@@ -234,6 +253,19 @@ async function fetchJson(pathname, options) {
   }
 
   return JSON.parse(bodyText);
+}
+
+async function expectHttpErrorJson(pathname, options, expectedStatus) {
+  const response = await fetch(`http://127.0.0.1:${port}${pathname}`, options);
+  const bodyText = await response.text();
+
+  assert.equal(response.status, expectedStatus, `${pathname} 預期 HTTP ${expectedStatus}，實際為 ${response.status}`);
+
+  try {
+    return JSON.parse(bodyText);
+  } catch (error) {
+    throw new Error(`${pathname} 預期 JSON 錯誤回應，實際 body=${bodyText}`);
+  }
 }
 
 function normalizeText(value) {
