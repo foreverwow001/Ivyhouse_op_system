@@ -19,6 +19,12 @@
 
 `Release owner`、`Release operator` 在本 runbook 中都是 release assignment label，不是新的 app RBAC 正式角色。
 
+`Idx-037` 已在 repo 內新增最小 technical enforcement：`.github/workflows/ci.yml` 會先以 workflow_dispatch 專用、非 environment-bound 的 `release-preflight-guard` job 呼叫 `tools/validate-release-preflight-guard.js`，以 `github.triggering_actor` / `github.actor`、`assignment_ref` 與 production backup / restore checklist 做 fail-closed 判定；通過後，environment-bound 的 `release-preflight` 才會以 `needs` 進入正式 preflight。這條 sequencing 不依賴 `quality-gate`，是本輪刻意 scope 切割：本 task 只處理 authorized actor / assignment / production checklist gate，不把一般 CI 成功與否混進 release authority decision。guard 寫入 `GITHUB_STEP_SUMMARY` 時，`assignment_ref` 只會在對 `|`、`<`、`>`、backtick、CR、LF 做最小安全處理後留作 evidence reference，並同時保留 `github.triggering_actor`、`github.actor`、`effective_actor` 供 rerun 稽核；若 checklist 檔案無法讀取，也必須以結構化 deny 訊息 fail-closed。這個 guard 目前只覆蓋 repo-native surface，不等於 GitHub Environment required reviewers、branch protection、org membership、或外部 sign-off 平台設定已自動完成。
+
+已知風險：workflow 的 global concurrency `cancel-in-progress: true` 仍可能在同一 ref 有新 push 時取消進行中的 `workflow_dispatch release-preflight`；本輪不調整 concurrency，只把這條風險保留在 runbook 供值班判讀。
+
+GitHub Environment required reviewers / branch protection 的實際設定值屬 repo 外控制面，本輪無法從 repo 內驗證；若存在 checklist bypass path，也只能列為 external / platform residual risk，不得在本 runbook 內假裝已解掉。
+
 | 目標環境 | authorized actor boundary | 判讀支援邊界 | fail-closed 條件 |
 |---|---|---|---|
 | staging | 只能由被指派的 `Release operator` 觸發 `release-preflight` | `Backend owner` 可協助 artifact / readback 判讀，但除非同時被正式指派，否則不能代按 | 無 assignment、target environment 判定不清、或 release assignment 記錄不完整時，不得觸發 |
@@ -40,16 +46,16 @@
 
 ### 觸發前置
 
-1. staging：確認本次觸發者是被指派的 `Release operator`，且 target environment 已存在 `DATABASE_URL` 與 `NEXT_PUBLIC_PORTAL_API_BASE_URL` binding。
-2. production：確認本次觸發者是被指派的 `Release owner`，且 target environment 已存在 `DATABASE_URL`、`ADMIN_DATABASE_URL` 與 `NEXT_PUBLIC_PORTAL_API_BASE_URL` binding。
+1. staging：確認本次觸發者是被指派的 `Release operator`，提供非空白 `assignment_ref`，且 target environment 已存在 `DATABASE_URL` 與 `NEXT_PUBLIC_PORTAL_API_BASE_URL` binding。
+2. production：確認本次觸發者是被指派的 `Release owner`，提供非空白 `assignment_ref`，且 target environment 已存在 `DATABASE_URL`、`ADMIN_DATABASE_URL` 與 `NEXT_PUBLIC_PORTAL_API_BASE_URL` binding。
 3. 確認本次 release 需要 read-only migration preflight，而不是直接做 destructive deploy。
 4. 若 target 為 production，先確認 backup / restore checklist 與 responsibility matrix 對應欄位都已填滿；缺任何一欄即停止，production `release-preflight` 不得按下。
 5. 確認 release pack、值班單或等價記錄中，能對應本次 `Release assignment` 的 `指派人`、`被指派人`、`目標環境`、`有效範圍`、`時間戳`，以及協助判讀者。
 
 ### 執行入口
 
-- GitHub Actions workflow: `.github/workflows/ci.yml` 的 `release-preflight`
-- workflow 會先驗證 environment bindings，再執行 `npm run preflight:formal-env`
+- GitHub Actions workflow: `.github/workflows/ci.yml` 的 `release-preflight-guard` 與 `release-preflight`
+- workflow 會先執行 `release-preflight-guard`，再由 `release-preflight` 驗證 environment bindings，最後執行 `npm run preflight:formal-env`
 - 產出 artifact：`migration-preflight-{target_environment}`
 
 ### Readback 步驟
@@ -109,6 +115,8 @@
 若以上任一欄位缺失，本 runbook 視為未完成，不得進 production cutover。
 
 截至 `Idx-024` 收口時，production backup / restore 的具體工具與 rehearsal evidence 仍未回填到 repo authority。這代表本 runbook 目前只定義 fail-closed 欄位與責任，不代表 production restore capability 已完成演練或可直接 sign-off。
+
+截至 `Idx-037`，production checklist 仍為 `可允許 production promote = fail`，因此 repo-native guard 會穩定阻擋 production `release-preflight`。要解除阻擋，仍需先由外部 owner 回填 checklist 與相關 sign-off evidence；任何 checklist bypass path 仍屬 external / platform residual risk，不在本 repo 本輪處理範圍內。
 
 正式回填入口請使用 `doc/architecture/flows/production_backup_restore_signoff_checklist.md`。在該 checklist 仍有 `pending` 前，不得把 `Idx-024` 視為完成。
 

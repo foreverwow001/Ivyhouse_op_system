@@ -15,6 +15,10 @@ on:
         options:
           - staging
           - production
+      assignment_ref:
+        description: Release assignment evidence reference
+        required: true
+        type: string
 
 concurrency:
   group: ivyhouse-${{ github.workflow }}-${{ github.ref }}
@@ -80,8 +84,31 @@ jobs:
       - name: Daily ops mainline smoke
         run: npm run test:daily-ops:mainline --workspace @ivyhouse/api
 
+  release-preflight-guard:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Enforce release-preflight guard
+        env:
+          TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
+          ASSIGNMENT_REF: ${{ inputs.assignment_ref }}
+          GITHUB_TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: node tools/validate-release-preflight-guard.js
+
   release-preflight:
     if: github.event_name == 'workflow_dispatch'
+    needs:
+      - release-preflight-guard
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_environment }}
     services:

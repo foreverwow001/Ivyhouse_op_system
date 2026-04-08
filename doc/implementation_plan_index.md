@@ -31,7 +31,7 @@
 | Idx-021 | Inventory-count / Production-planning 正式 auth 與 maker-checker 補強 | Phase 1 | product-system | Completed | Idx-013, Idx-015, Idx-016, Idx-017 | 正式身份驗證承接、inventory-count / production-planning 角色邊界終版、approval skeleton、maker-checker 路徑 | 已完成第一個正式實作切片：Portal session principal 已取代過渡身份來源，inventory-count approval skeleton 已落地，production-planning 已切至 principal 驅動；殘餘角色邊界風險轉交 sign-off 管理 |
 | Idx-022 | Production-planning 完整 approval persistence 與 approver boundary 收斂 | Phase 1 | product-system | Completed | Idx-018, Idx-021 | production-planning approval persistence、plan/rerun 決策端點、`管理員` 最終 approver 邊界收斂、deploy preflight evidence | 已完成 production-planning maker-checker persistence、admin-only approver 邊界收斂、本機 / 測試叢集 deploy preflight 與 readback evidence；殘餘 revision 鏈長與 admin+supervisor 交集政策列為後續治理 |
 | Idx-023 | Go-Live Blocker 收斂：前端骨架、CI/CD、環境治理、主資料完整化與正式環境 Preflight | Phase 1 → Go-Live | product-system | Completed | Idx-018, Idx-022 | 前端 Portal UI、CI/CD Pipeline、環境變數與密鑰治理、主資料升格、正式環境 migration preflight、production-planning approval 完化 | 已完成 Slice 1-7：Portal workbench、CI/env governance、主資料 active surface、read-only migration preflight、scratch DB replay drill、QA/security review、one-shot reviewer wrapper，並補齊 GitHub-hosted `release-preflight` artifact evidence |
-| Idx-024 | Go-Live 後高風險補強：E2E 場景擴充、運維預案與用戶操作手冊 | Phase 1 → Post-Launch | product-system | QA | Idx-023, Idx-032 | E2E 邊界場景測試、正式環境運維預案、中文版用戶操作手冊 | 三個 slices 與最小 executable evidence 已交付；QA、Security 與 Domain review 已完成條件通過，唯一剩餘阻斷為 external infra backup/restore sign-off |
+| Idx-024 | Go-Live 後高風險補強：E2E 場景擴充、運維預案與用戶操作手冊 | Phase 1 → Post-Launch | product-system | QA | Idx-023, Idx-032 | E2E 邊界場景測試、正式環境運維預案、中文版用戶操作手冊 | 三個 slices 與最小 executable evidence 已交付；QA、Security 與 Domain review 已完成條件通過，但 external infra backup/restore blocker 仍在，且 `Idx-037` 已以 repo-native guard 技術性維持 production fail-closed |
 | Idx-025 | 漸進補強：測試深化、Observability、Opening Balance 擴張與效能基準 | Phase 2 | product-system | Planning | Idx-023, Idx-024 | 後端單元測試、Logging & Observability、多窗口/多倉 opening balance、效能基準、前端品質 | 將 Phase 1 MVP 從「可用」推進到「可持續維護與擴張」；承接 Idx-020 deferred |
 | Idx-026 | Repo-local UI/UX skill family 建置：品牌 style、入口頁、流程 landing、2.5D icon 與前端互動狀態 | Phase 1 → Go-Live Support | workflow-core | Completed | Idx-023 | `.agent/skills_local/` UI/UX skills、local overlay catalog、skill references、Portal 前端實作 guardrail | 已完成 repo-local UI/UX skill family 第一版與 overlay catalog，供 `Idx-023` 的 login / landing / theme / icon / UI states 前端切片直接使用 |
 | Idx-027 | Workflow 修正切片：UI/UX local skills 自動載入鏈與 PTY formal execution 強制收斂 | Phase 1 → Go-Live Support | workflow-core | Completed | Idx-026 | skills trigger checklist、Coordinator/Engineer 注入規則、PTY execution enforcement、最小 smoke 驗證 | 已補建 project-local authoritative trigger checklist、Coordinator PTY contract 與 formal execution 後驗證條文；preflight 與 strict PTY evidence check 皆通過，可作為 `Idx-023` 前端切片的 workflow 基座 |
@@ -44,6 +44,7 @@
 | Idx-034 | 單人營運正式層最小 deploy / backup / rollback contract | Phase 1 → Governance | product-system | Completed | Idx-024, Idx-033 | formal contract authority、plan / log artifact、flows navigation | 已完成單人營運正式層最小正式層 contract 單一入口，authority 位於 `doc/architecture/flows/single_operator_formal_deploy_backup_rollback_contract.md`，收斂固定 deploy path、provider-managed backup / restore fail-closed 與 rollback 停等點；不含 deploy automation、restore drill、RTO / RPO 回填或 production sign-off，且不解除 `Idx-024` external infra blocker |
 | Idx-035 | 單人營運正式層 release-preflight 觸發者身份與角色邊界 | Phase 1 → Governance | product-system | QA | Idx-024, Idx-033, Idx-034 | release-preflight authorized actor boundary、release assignment label 語意、authority cross-reference | 已完成 docs-only governance 收斂：staging 僅限被指派 `Release operator` 觸發並由 `Backend owner` 協助判讀，production 僅限被指派 `Release owner` 觸發且 backup / restore checklist 未完整時 fail-closed；`Release owner` / `Release operator` 明定為 release assignment label，不是新 RBAC 角色，且不含 GitHub 權限 enforcement 或 production sign-off |
 | Idx-036 | 任務 Track 欄位治理補強：系統任務與 workflow 任務分流 | Phase 1 → Governance | workflow-core | QA | Idx-033 | Track 欄位治理規則、implementation index Track 回填、plan template `track` 錨點、主 plan 回補、README 說明 | 雖影響 product-system artifacts，但本輪主要修改對象是 planning / workflow governance metadata，因此 Track 明確歸為 `workflow-core` |
+| Idx-037 | release-preflight authorized actor boundary repo-native enforcement | Phase 1 → Governance | product-system | QA | Idx-024, Idx-033, Idx-034, Idx-035 | workflow guard job、repo-native validation script、plan / log artifact、governance cross-reference | 已將 authorized actor boundary 從 docs-only 收斂推進到 repo-native fail-closed guard：`workflow_dispatch` 新增 `assignment_ref` reference gate、新增獨立 `release-preflight-guard` job，並由 environment-bound `release-preflight` 以 `needs` 依賴它；`quality-gate` 不承接 guard 是本輪刻意 scope 切割，不把一般 CI 成功與否混進 release authority decision；staging 與 production allowlist 暫只允許 `foreverwow001`；production 因 backup / restore checklist 仍為 `fail`，技術 guard 會穩定阻擋 production release-preflight，required reviewers / team membership / external sign-off 仍屬 repo 外 follow-up |
 
 ## 依賴語意
 
@@ -62,8 +63,8 @@
 ### 下一階段
 
 3. **Idx-023（Tier 1 Blocker）**：go-live 前必須完成。關鍵路徑為前端 Portal UI；`Idx-028` 已交付其第一個最小切片，後續再擴到 intake / daily ops / CI/CD / env / master data 等 blocker 面。
-4. **Idx-024（Tier 2 High Risk）**：review 收口中。三個 slices 已完成；剩餘阻斷為 `Idx-032` reviewer tooling 修復後的 Domain reviewer 可用結論，以及 production backup/restore 外部 sign-off。
-5. **Idx-032（Tier 2 Workflow Hardening）**：已啟動。先修 reviewer wrapper / preflight 的 behavioral fail-closed 與 Domain contract，再回頭關閉 `Idx-024` blocker。
+4. **Idx-024（Tier 2 High Risk）**：review 收口中。三個 slices 已完成；剩餘阻斷為 production backup/restore 外部 sign-off，且 `Idx-037` 已把 checklist 狀態接成 repo-native fail-closed technical block。
+5. **Idx-032（Tier 2 Workflow Hardening）**：已完成。reviewer wrapper / preflight 的 behavioral fail-closed 與 Domain contract 已收口，`Idx-024` 的 repo 內 reviewer blocker 已解除；剩餘仍是 external infra sign-off。
 6. **Idx-025（Tier 3 Progressive）**：待 `Idx-024` 收斂後再啟動。測試深化、Observability、多窗口 opening balance、效能基準。
 
 ## 狀態說明
@@ -87,11 +88,11 @@
 
 ## 統計資訊
 
-總任務數：36
+總任務數：37
 - Approved：0
 - Planning：1
 - In Progress：0
-- QA：3
+- QA：4
 - Completed：32
 
 ## 任務編號規則
