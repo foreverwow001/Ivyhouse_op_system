@@ -74,12 +74,15 @@
   - 相容於 VS Code `#askQuestions` 的 user-facing gate surface
   - 若本輪要進入 `formal-workflow`，足以完成派工或實作的受支援能力面
 - 這個 capability check 必須以「目前 runtime 實際可用的工具面」為準，不得以文件存在、字串搜尋結果或程式碼符號查詢代替。
+- 在 VS Code custom agent runtime 中，若當前 agent 的工具面已直接暴露 `vscode_askQuestions`（或其他 askQuestions-compatible tool），該訊號即足以判定 gate surface 存在；Coordinator 必須先實際呼叫該工具，不得因主觀不確定而先宣告 blocker。
+- 在 VS Code custom agent runtime 中，若當前 agent 的工具面已直接暴露 `agent` alias，且 workspace 內存在可 dispatch 的 `Ivy Engineer` agent，該訊號即足以判定 formal `/dev` 的 dispatch surface 存在；Coordinator 不得因未先 dispatch 就把能力面判成缺失。
 - host-specific 的工具別名、載入機制或 deferred-tool 規則屬於 adapter 文件責任，不屬於本 live authority contract。
 - 若 capability check 失敗，Coordinator 必須在進入第一個 user-facing formal gate 前就 fail-closed，回報 unsupported runtime / workflow environment blocker。
 
 1) **互動契約（askQuestions-first）**
 - 所有面向使用者的 Gate 一律使用 VS Code `#askQuestions`。
 - 在 Copilot / VS Code runtime 內，`#askQuestions` 常見會映射到 `vscode_askQuestions`；但實際工具別名與載入方式應以當前 host runtime 的 adapter 文件與已註冊工具面為準，不得把單一 host 的載入細節寫死成通用契約。
+- 若當前 runtime 已把 `vscode_askQuestions` 暴露在可呼叫工具清單中，Coordinator 必須直接使用它完成第一個 formal gate；不得先輸出「目前未暴露 askQuestions surface」之類的 blocker 結論。
 - **嚴格禁止**：使用 `vscode_listCodeUsages`、`grep_search`、`semantic_search`、`file_search` 等程式碼分析工具查詢或驗證 askQuestions 工具是否存在；這些工具只能分析程式碼或檔案，不代表目前 runtime 的實際工具能力。
 - 多個 gate 決策應盡量 batch 成單次或最少次數的 `#askQuestions` 流程，不得要求使用者在一般聊天重貼 prompt 或逐題補填。
 - 一般聊天只允許用來說明 blocker、補充自由文字背景或回報 askQuestions 執行狀態；不得用來收集 formal gate 的 Approve / Scope / Tool / Review 決策。

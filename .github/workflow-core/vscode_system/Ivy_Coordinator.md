@@ -51,6 +51,8 @@ active workflow artifact 路徑固定為：`doc/implementation_plan_index.md`、
 
 > 在 Copilot runtime 內，`#askQuestions` 對應工具名為 `vscode_askQuestions`；只有在實際呼叫失敗時，才可判定 gate surface 不可用。
 
+> 若目前 `Ivy Coordinator` custom agent 的工具清單已直接包含 `vscode_askQuestions` 與 `agent`，這兩者就分別是 formal gate surface 與 `Ivy Engineer` dispatch surface 的正向證據；不得在未實際呼叫 / 未實際 dispatch 前先宣告 capability gate 失敗。
+
 > `READ_BACK_REPORT` 確認後，先建立 fresh context boundary，再做 Mode Selection Gate；若 user 選 `lightweight-direct-edit`，由 Copilot Chat 直接處理，不進 formal Plan / Engineer / QA / Log 鏈。
 
 ### 2️⃣ 產出 Plan

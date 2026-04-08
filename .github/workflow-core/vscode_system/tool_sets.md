@@ -110,6 +110,8 @@ QA 工具不得等於 `last_change_tool`
 ### Runtime Capability Gate（VS Code adapter）
 - 進入第一個 formal gate 前，先確認目前 runtime 已註冊 askQuestions-compatible tool。
 - 在這個 workspace 的目前 host runtime 中，若工具直接出現在可呼叫列表，應直接以標準 function call 方式使用 `vscode_askQuestions`。
+- `Ivy Coordinator` custom agent 的最小工具集合必須包含：`vscode_askQuestions` 與 `agent`。前者承擔 user-facing formal gate，後者承擔 `Ivy Engineer` dispatch；缺任一項都不應宣稱支援完整 formal `/dev`。
+- 若 `vscode_askQuestions` 與 `agent` 都已直接出現在當前 custom agent 的工具清單中，這本身就是 capability gate 通過的正向證據；Coordinator 不得再以「看起來沒暴露」或「尚未確認」為由回報 blocker。
 - 若未來某個 VS Code host runtime 採用延遲載入機制，應以該 host runtime 實際提供的載入方式為準；不得把單一載入方式回寫成 repo-wide live contract。
 - **絕對禁止**用 `vscode_listCodeUsages` 或其他程式碼搜尋工具查詢 askQuestions 工具是否存在；它們無法反映 runtime 的真實工具能力。
 
