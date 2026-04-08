@@ -39,6 +39,7 @@
 | Idx-031 | AskQuestions-first fail-closed workflow hardening | Phase 1 → Workflow Hardening | Completed | Idx-029, Idx-030 | `#askQuestions` fail-closed gate contract、batched confirmation rules、downstream template sync | 已修正 live authority 與 downstream bootstrap template，正式禁止以一般聊天收集 formal gate 決策；若 askQuestions surface 缺失，視為 workflow environment blocker |
 | Idx-032 | Reviewer CLI behavioral hardening 與 Domain reviewer contract 補強 | Phase 1 → Workflow Hardening | Completed | Idx-029, Idx-031 | reviewer wrapper behavioral fail-closed、preflight behavioral smoke、Domain reviewer role/package contract、Domain reviewer 可採信輸出 | 已完成 reviewer wrapper / preflight hardening、Domain package contract 與 independent QA/Security reviewer 收口；`Idx-024` 的 repo 內 Domain blocker 已解除，殘餘風險以 host-level copilot supply chain 與 external infra sign-off 為主 |
 | Idx-033 | 營運模式與正式資料庫 provider 治理基線 | Phase 1 → Governance | Completed | Idx-007, Idx-023 | operating mode authority 文檔、provider baseline、入口引用點、plan template `operating_mode` 欄位 | 已完成 repo-native authority 文檔與最小引用點，正式採納 `內部測試模式` / `單人營運正式層`，並收斂 Supabase 為中短期正式資料庫首選；不含 runtime implementation |
+| Idx-034 | 單人營運正式層最小 deploy / backup / rollback contract | Phase 1 → Governance | Completed | Idx-024, Idx-033 | formal contract authority、plan / log artifact、flows navigation | 已完成單人營運正式層最小正式層 contract 單一入口，authority 位於 `doc/architecture/flows/single_operator_formal_deploy_backup_rollback_contract.md`，收斂固定 deploy path、provider-managed backup / restore fail-closed 與 rollback 停等點；不含 deploy automation、restore drill、RTO / RPO 回填或 production sign-off，且不解除 `Idx-024` external infra blocker |
 
 ## 依賴語意
 
@@ -82,12 +83,12 @@
 
 ## 統計資訊
 
-總任務數：33
+總任務數：34
 - Approved：0
 - Planning：1
 - In Progress：0
 - QA：1
-- Completed：31
+- Completed：32
 
 ## 任務編號規則
 

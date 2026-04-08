@@ -180,6 +180,7 @@ Ivyhouse OP System 的主線不是單一 CRUD，而是以下閉環：
 - `doc/architecture/flows/daily_ops_engineering_breakdown.md`：把日常扣帳、回填、盤點與三張表 owner 邊界拆成工程可落地的資料表 / API / 狀態事件清單
 - `doc/architecture/flows/daily_ops_seed_bootstrap_strategy.md`：定義日常營運 MVP 的 migration 套用、seed 邊界、開帳庫存 bootstrap 與第一批正式資料進場策略
 - `doc/architecture/flows/post_launch_edge_path_matrix.md`：彙整 go-live 後 opening balance、production-planning、inventory-count、intake、ledger 與 hosted preflight 的高風險邊界場景矩陣、owner 與 evidence 分類
+- `doc/architecture/flows/single_operator_formal_deploy_backup_rollback_contract.md`：收斂單人營運正式層的最小 formal deploy / backup / rollback contract，明確界定固定 deploy path、provider-managed backup fail-closed、rollback 停等點與對既有 authority 的回指
 - `doc/architecture/flows/post_launch_ops_runbook.md`：把 hosted release-preflight readback、backup / restore responsibility matrix、health / readiness contract 與 escalation / rollback tree 收斂成值班入口
 - `doc/architecture/flows/production_backup_restore_signoff_checklist.md`：提供 external infra owner 在 production cutover 前回填 backup 工具、restore rehearsal、RTO/RPO 與最終 sign-off 的 fail-closed checklist
 - `doc/architecture/flows/post_launch_operator_handbook_zh_tw.md`：提供 intake、daily ops、release-preflight 與 rollback 的繁中操作手冊與值班交接清單
