@@ -1,7 +1,7 @@
 # Idx-024: Go-Live 後高風險補強 — E2E 場景擴充、運維預案與用戶操作手冊 - Execution Log
 
 > 建立日期: 2026-04-04
-> 最近更新: 2026-04-07
+> 最近更新: 2026-04-08
 > 狀態: QA
 
 ---
@@ -104,10 +104,10 @@
 
 ## 🧭 DOMAIN_REVIEW_STATUS
 
-- 狀態：BLOCKED
-- 原因：fresh one-shot Domain reviewer CLI 有輸出檔，但只產生不完整的 `Task Summary`，未返回可採信結論
-- 影響：不阻斷本輪 repo 內 slices / smoke / runbook / handbook 交付，但阻斷把 `Idx-024` 宣告為完全 `Completed`
-- 下一步：在 reviewer CLI 穩定後補一次 read-only Domain review，或由正式 Domain Expert 以固定 package 重新簽核
+- 狀態：PASS_WITH_RISK
+- 原因：`Idx-032` 已修復 reviewer tooling 與 Domain contract；重新執行 read-only Domain review 後，未再發現 repo 內 domain blocker
+- 影響：`Idx-024` 的 repo 內交付與 Domain 面已完成收口；目前唯一剩餘阻斷為 external infra backup/restore sign-off checklist 仍為 `pending/fail`
+- 下一步：由 external infra owner 補齊 backup/restore rehearsal evidence、RTO/RPO 與三方 final sign-off；未補齊前不得把 `Idx-024` 宣告為 `Completed`
 
 ## 🏁 COMPLETION_MARKERS
 
@@ -135,4 +135,5 @@
 - Focused validation: `cd apps/api && npm run build && node test/intake-api-smoke.js` -> PASS
 - QA one-shot reviewer: `PASS_WITH_RISK`（direct one-shot prompt）
 - Security one-shot reviewer: `PASS_WITH_RISK`（direct one-shot prompt）
-- Domain one-shot reviewer: blocked（輸出不完整，僅有 `Task Summary`，無可採信結論）
+- Domain one-shot reviewer：`PASS_WITH_RISK`（read-only Domain review 已確認 repo 內無持續阻斷的 domain blocker）
+- `doc/architecture/flows/production_backup_restore_signoff_checklist.md`：`Pre-Production Decision=fail`，`Final Sign-off=pending`

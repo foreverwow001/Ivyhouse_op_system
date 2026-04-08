@@ -1,8 +1,8 @@
 # Idx-032: Reviewer CLI behavioral hardening 與 Domain reviewer contract 補強 - Execution Log
 
 > 建立日期: 2026-04-07
-> 最近更新: 2026-04-07
-> 狀態: In Progress
+> 最近更新: 2026-04-08
+> 狀態: Completed
 
 ---
 
@@ -30,40 +30,59 @@
 
 | Item | Value |
 |------|-------|
-| executor_tool | pending |
-| security_reviewer_tool | pending |
-| qa_tool | pending |
-| last_change_tool | N/A |
-| qa_result | pending |
+| executor_tool | GitHub Copilot |
+| security_reviewer_tool | copilot-cli-reviewer |
+| qa_tool | copilot-cli-reviewer |
+| last_change_tool | GitHub Copilot |
+| qa_result | PASS_WITH_RISK |
 | commit_hash | pending |
 
 ## 📝 EXECUTION_NOTES
 
 ### 本輪決策
 
-1. `Idx-024` 的真正 reviewer blocker 已從內容面收斂到 tooling 面：wrapper 未支援正式 Domain role，preflight 只驗靜態存在性。
-2. 先把 reviewer tooling hardening 獨立成 `Idx-032`，避免把 workflow tooling 修復與 `Idx-024` 結案混成同一包。
-3. 先補 `reviewer-packages.instructions.md` 的 Domain package contract，作為後續 Engineer 修正 wrapper / preflight 的 authority input。
-4. 已完成 `Idx-032` plan validator，證明新 work unit 結構合法；並補 external infra sign-off checklist，避免 `Idx-024` 的 production sign-off 只停留在聊天待辦。
+1. 本輪完成 reviewer wrapper / preflight / package contract 三個面向的收口，已讓 QA、Security、Domain reviewer surface 都能走 fail-closed contract。
+2. reviewer command trust source 已自 workspace settings 抽離，並補上 repo 外 package / output-file fence、workspace-local fake copilot 拒絕、resolved command path 一致性與 pinned path 驗證。
+3. `Idx-024` 原先的 repo 內 Domain blocker 已解除；剩餘阻斷已收斂為 external infra backup/restore sign-off。
 
 ### 目前已知根因
 
-- `copilot_cli_one_shot_reviewer.py` 只支援 `qa` / `security`，未與 `Ivy Domain Expert` surface 對齊。
-- `workflow_preflight_reviewer_cli.py` 的 `status=ready` 只依賴 command / path / wrapper 存在，不驗 one-shot 行為與輸出完整性。
-- `Idx-024` Domain reviewer 曾產生輸出檔，但只含不完整 `Task Summary`，證明目前 tooling 缺少 output completeness fail-closed。
+- preflight 先前只做靜態存在性檢查，無法攔住 empty output、incomplete output 或 one-shot reviewer 行為失敗。
+- wrapper 先前缺少 `domain` role、command trust boundary 與 repo fence，導致 `Idx-024` 的 fresh Domain review 無法產出可採信結論。
+
+### 本輪 Engineer 實作
+
+1. `copilot_cli_one_shot_reviewer.py` 已正式支援 `qa`、`security`、`domain` 三種 role，並對 empty output、timeout、incomplete output fail-closed。
+2. wrapper 已移除 `--allow-all-tools`，補上 workspace-local fake copilot 拒絕、repo 外 package / output-file fence、resolved command path 一致性與 pinned path 驗證。
+3. `workflow_preflight_reviewer_cli.py` 已升級為 static checks + behavioral smoke 的 `ready` 判定，且不再信任 workspace settings 作為 command / wrapper trust source。
+4. `reviewer-packages.instructions.md` 已補齊 Domain package contract 與 fixed headings，讓 `Idx-024` 能重新執行可採信 Domain review。
 
 ## ✅ QA_SUMMARY
 
-- 結論：pending
-- 風險：在 reviewer tooling 未修復前，`Idx-024` 只能停留在 `QA`，不得宣告 `Completed`
-- 後續事項：待 Engineer 完成 wrapper / preflight hardening 後，重跑 Domain reviewer，解除 `Idx-024` blocker
+- 結論：PASS_WITH_RISK
+- 風險：output_file 在 fail-closed 路徑仍可能留下未驗證內容；live-run section completeness 的可重播證據仍可在後續補強
+- 後續事項：`Idx-024` 使用 hardened reviewer surface 回補 Domain review；後續 progressive hardening 可再收斂 output_file 寫入時序與 pinned path enforcement 細節
+
+## 🔐 SECURITY_REVIEW_SUMMARY
+
+- 結論：PASS_WITH_RISK
+- Findings：command trust source、workspace-local fake copilot、repo 外 package/output-file fence、resolved command path 一致性與 pinned path 驗證皆已收斂；殘餘風險以 host-level copilot CLI supply chain 與 LLM prompt injection 固有風險為主
+- 後續事項：若要再往下收斂，可補 output_file 僅在完全驗證後寫入、以及缺少 pinned path 時的更嚴格 fail policy
+
+## 🏁 COMPLETION_MARKERS
+
+- `[ENGINEER_DONE]`: present
+- `[QA_DONE]`: present
+- `[FIX_DONE]`: present
 
 ## 📎 EVIDENCE
 
-- `.github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py`
-- `.github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py`
-- `.github/agents/ivy-domain-expert.agent.md`
-- `.github/instructions/reviewer-packages.instructions.md`
-- `python .github/workflow-core/skills/plan-validator/scripts/plan_validator.py doc/plans/Idx-032_plan.md` -> PASS
-- `doc/architecture/flows/production_backup_restore_signoff_checklist.md`
-- `doc/logs/Idx-024_log.md`
+- `command -v copilot` -> PASS；resolved path: `/home/vscode/.vscode-server-insiders/data/User/globalStorage/github.copilot-chat/copilotCli/copilot`
+- `python .github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py --role domain --package-file doc/plans/Idx-032_plan.md --dry-run` -> PASS；`resolved_copilot_command` 與 `command[0]` 同為 `/home/vscode/.vscode-server-insiders/data/User/globalStorage/github.copilot-chat/copilotCli/copilot`
+- `tmp=$(mktemp /tmp/idx032_outside_XXXX.md) && printf '# temp\n' > "$tmp" && python .github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py --role domain --package-file "$tmp" --dry-run` -> FAIL（預期）；stderr 含 `reviewer wrapper rejected package file outside repo root`
+- `python .github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py --role domain --package-file doc/plans/Idx-032_plan.md --output-file /tmp/reviewer-out.txt --dry-run` -> FAIL（預期）；stderr 含 `reviewer wrapper rejected output file outside repo root`
+- `IVYHOUSE_REVIEWER_CLI_PINNED_COMMAND_PATH=/home/vscode/.vscode-server-insiders/data/User/globalStorage/github.copilot-chat/copilotCli/copilot python .github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py --role domain --package-file doc/plans/Idx-032_plan.md --copilot-command /tmp/fake/copilot --dry-run` -> FAIL（預期）；stderr 含 `reviewer wrapper rejected copilot command path mismatch`
+- `IVYHOUSE_REVIEWER_CLI_PINNED_COMMAND_PATH=/home/vscode/.vscode-server-insiders/data/User/globalStorage/github.copilot-chat/copilotCli/copilot python .github/workflow-core/runtime/scripts/vscode/copilot_cli_one_shot_reviewer.py --role domain --package-file doc/plans/Idx-032_plan.md --copilot-command /home/vscode/.vscode-server-insiders/data/User/globalStorage/github.copilot-chat/copilotCli/copilot --dry-run` -> PASS
+- `python .github/workflow-core/runtime/scripts/vscode/workflow_preflight_reviewer_cli.py --json` -> PASS；`status=ready`、`resolved_command_path=/home/vscode/.vscode-server-insiders/data/User/globalStorage/github.copilot-chat/copilotCli/copilot`、`command_outside_workspace=true`、`behavioral_smoke.status=passed`
+- Security one-shot reviewer：`PASS_WITH_RISK`
+- QA one-shot reviewer：`PASS_WITH_RISK`

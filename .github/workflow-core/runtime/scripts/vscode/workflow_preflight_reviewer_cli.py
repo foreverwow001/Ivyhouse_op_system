@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""檔案用途：檢查 one-shot reviewer CLI 是否可作為預設 QA / Security Review 路徑使用。"""
+"""檔案用途：檢查 one-shot reviewer CLI 是否可作為預設 QA / Security / Domain Review 路徑使用。"""
 
 from __future__ import annotations
 
@@ -7,11 +7,31 @@ import argparse
 import json
 import os
 import shutil
+import subprocess
+import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
 
 SCRIPT_PATH = Path(__file__).resolve()
+CANONICAL_WRAPPER_RELATIVE_PATH = Path(".github") / "workflow-core" / "runtime" / "scripts" / "vscode" / "copilot_cli_one_shot_reviewer.py"
+DEFAULT_REVIEWER_COMMAND = "copilot"
+ALLOWED_REVIEWER_COMMANDS = [DEFAULT_REVIEWER_COMMAND]
+PINNED_COMMAND_PATH_ENV = "IVYHOUSE_REVIEWER_CLI_PINNED_COMMAND_PATH"
+REVIEWER_COMMAND_ENV = "IVYHOUSE_REVIEWER_CLI_COMMAND"
+SMOKE_ROLE = "domain"
+SMOKE_TIMEOUT_SECONDS = 90
+SMOKE_SUBPROCESS_GRACE_SECONDS = 10
+
+
+def truncate_text(raw_value: str | None, limit: int = 800) -> str | None:
+    if raw_value is None:
+        return None
+    collapsed = raw_value.strip()
+    if len(collapsed) <= limit:
+        return collapsed
+    return f"{collapsed[:limit]}...<truncated>"
 
 
 def detect_runtime_surface() -> str:
@@ -21,91 +41,151 @@ def detect_runtime_surface() -> str:
     return "unknown"
 
 
-def load_workspace_settings(repo_root: Path) -> dict[str, Any]:
-    settings_file = repo_root / ".vscode" / "settings.json"
-    if not settings_file.exists():
-        return {}
-
-    cleaned_lines: list[str] = []
-    for line in settings_file.read_text(encoding="utf-8", errors="ignore").splitlines():
-        if line.lstrip().startswith("//"):
-            continue
-        cleaned_lines.append(line)
-
+def path_is_within(parent: Path, candidate: Path) -> bool:
     try:
-        payload = json.loads("\n".join(cleaned_lines))
-    except json.JSONDecodeError:
-        return {}
-    return payload if isinstance(payload, dict) else {}
+        candidate.relative_to(parent)
+    except ValueError:
+        return False
+    return True
 
 
-def resolve_reviewer_command(repo_root: Path) -> str:
-    settings = load_workspace_settings(repo_root)
-    value = settings.get("ivyhouseReviewerCli.command")
-    if isinstance(value, str) and value.strip():
-        return value.strip()
-    return "copilot"
+def resolve_reviewer_command() -> str:
+    value = os.environ.get(REVIEWER_COMMAND_ENV, DEFAULT_REVIEWER_COMMAND).strip()
+    return value or DEFAULT_REVIEWER_COMMAND
 
 
-def resolve_allowed_commands(repo_root: Path) -> list[str]:
-    settings = load_workspace_settings(repo_root)
-    raw_value = settings.get("ivyhouseReviewerCli.allowedCommands")
-    if isinstance(raw_value, list):
-        normalized = [str(item).strip() for item in raw_value if str(item).strip()]
-        if normalized:
-            return normalized
-    return ["copilot"]
+def resolve_allowed_commands() -> list[str]:
+    return list(ALLOWED_REVIEWER_COMMANDS)
 
 
-def resolve_pinned_command_path(repo_root: Path) -> str | None:
-    settings = load_workspace_settings(repo_root)
-    value = settings.get("ivyhouseReviewerCli.pinnedCommandPath")
+def resolve_pinned_command_path() -> str | None:
+    value = os.environ.get(PINNED_COMMAND_PATH_ENV)
     if isinstance(value, str) and value.strip():
         return str(Path(value.strip()).expanduser())
     return None
 
 
 def resolve_wrapper_path(repo_root: Path) -> Path:
-    settings = load_workspace_settings(repo_root)
-    value = settings.get("ivyhouseReviewerCli.wrapperPath")
-    if isinstance(value, str) and value.strip():
-        return expand_workspace_path(repo_root, value.strip())
-    return repo_root / ".github" / "workflow-core" / "runtime" / "scripts" / "vscode" / "copilot_cli_one_shot_reviewer.py"
+    return (repo_root / CANONICAL_WRAPPER_RELATIVE_PATH).resolve()
 
 
-def expand_workspace_path(repo_root: Path, raw_value: str) -> Path:
-    expanded = raw_value.replace("${workspaceFolder}", str(repo_root))
-    return Path(os.path.expanduser(expanded)).resolve()
+def build_behavioral_smoke_package() -> str:
+    return """## Task Summary
+
+- reviewer behavioral smoke for one-shot domain surface
+
+## Domain Scope
+
+- verify repo-native reviewer wrapper can return a complete domain review in one fresh session
+
+## Authoritative Inputs
+
+- .github/instructions/reviewer-packages.instructions.md
+- .github/agents/ivy-domain-expert.agent.md
+
+## Spec or Plan Summary
+
+- this is a tooling smoke test; if no domain-specific risk is implied, return `N/A` conservatively while preserving all required sections
+"""
+
+
+def run_behavioral_smoke(repo_root: Path, wrapper_path: Path, command: str) -> dict[str, Any]:
+    with tempfile.TemporaryDirectory(prefix=".ivy-reviewer-smoke-", dir=repo_root) as temp_dir:
+        package_file = Path(temp_dir) / "domain-review-package.md"
+        package_file.write_text(build_behavioral_smoke_package(), encoding="utf-8")
+
+        smoke_command = [
+            sys.executable,
+            str(wrapper_path),
+            "--role",
+            SMOKE_ROLE,
+            "--package-file",
+            str(package_file),
+            "--repo-root",
+            str(repo_root),
+            "--copilot-command",
+            command,
+            "--timeout-seconds",
+            str(SMOKE_TIMEOUT_SECONDS),
+        ]
+
+        try:
+            result = subprocess.run(
+                smoke_command,
+                cwd=repo_root,
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=SMOKE_TIMEOUT_SECONDS + SMOKE_SUBPROCESS_GRACE_SECONDS,
+            )
+        except subprocess.TimeoutExpired as exc:
+            return {
+                "status": "failed",
+                "role": SMOKE_ROLE,
+                "timeout_seconds": SMOKE_TIMEOUT_SECONDS,
+                "reason": "behavioral_smoke_timeout",
+                "command": smoke_command,
+                "stdout_excerpt": truncate_text(exc.stdout),
+                "stderr_excerpt": truncate_text(exc.stderr),
+            }
+
+    return {
+        "status": "passed" if result.returncode == 0 else "failed",
+        "role": SMOKE_ROLE,
+        "timeout_seconds": SMOKE_TIMEOUT_SECONDS,
+        "reason": None if result.returncode == 0 else "behavioral_smoke_failed",
+        "command": smoke_command,
+        "exit_code": result.returncode,
+        "stdout_excerpt": truncate_text(result.stdout),
+        "stderr_excerpt": truncate_text(result.stderr),
+    }
 
 
 def run_reviewer_cli_preflight(repo_root: Path) -> dict[str, Any]:
-    command = resolve_reviewer_command(repo_root)
-    allowed_commands = resolve_allowed_commands(repo_root)
-    pinned_command_path = resolve_pinned_command_path(repo_root)
+    command = resolve_reviewer_command()
+    allowed_commands = resolve_allowed_commands()
+    pinned_command_path = resolve_pinned_command_path()
     wrapper_path = resolve_wrapper_path(repo_root)
     command_path = shutil.which(command)
     command_available = command_path is not None
     wrapper_exists = wrapper_path.exists()
+    wrapper_is_file = wrapper_path.is_file()
+    wrapper_is_symlink = wrapper_path.is_symlink()
     runtime_surface = detect_runtime_surface()
 
-    command_allowed = command in allowed_commands
+    command_allowed = Path(command).name in allowed_commands
     resolved_command_path = str(Path(command_path).resolve()) if command_path else None
+    command_outside_workspace = bool(resolved_command_path) and not path_is_within(repo_root, Path(resolved_command_path))
     pinned_path_matches = True
     normalized_pinned_path = None
     if pinned_command_path:
         normalized_pinned_path = str(Path(pinned_command_path).resolve())
         pinned_path_matches = resolved_command_path == normalized_pinned_path
 
-    status = "ready" if command_available and command_allowed and pinned_path_matches and wrapper_exists else "failed"
+    behavioral_smoke: dict[str, Any] | None = None
+    behavioral_smoke_passed = False
+    if command_available and command_allowed and command_outside_workspace and pinned_path_matches and wrapper_exists and wrapper_is_file and not wrapper_is_symlink:
+        behavioral_smoke = run_behavioral_smoke(repo_root, wrapper_path, command)
+        behavioral_smoke_passed = behavioral_smoke["status"] == "passed"
+
+    status = "ready" if command_available and command_allowed and command_outside_workspace and pinned_path_matches and wrapper_exists and wrapper_is_file and not wrapper_is_symlink and behavioral_smoke_passed else "failed"
     warnings: list[str] = []
     if not command_available:
         warnings.append("reviewer_cli_command_missing")
     if not command_allowed:
         warnings.append("reviewer_cli_command_not_allowlisted")
+    if command_available and not command_outside_workspace:
+        warnings.append("reviewer_cli_command_in_workspace")
     if pinned_command_path and not pinned_path_matches:
         warnings.append("reviewer_cli_command_path_mismatch")
     if not wrapper_exists:
         warnings.append("reviewer_wrapper_missing")
+    if wrapper_exists and not wrapper_is_file:
+        warnings.append("reviewer_wrapper_not_a_file")
+    if wrapper_is_symlink:
+        warnings.append("reviewer_wrapper_symlink_rejected")
+    if behavioral_smoke and not behavioral_smoke_passed:
+        warnings.append(str(behavioral_smoke.get("reason") or "behavioral_smoke_failed"))
 
     return {
         "status": status,
@@ -115,18 +195,24 @@ def run_reviewer_cli_preflight(repo_root: Path) -> dict[str, Any]:
         "command_available": command_available,
         "command_path": command_path,
         "resolved_command_path": resolved_command_path,
+        "command_outside_workspace": command_outside_workspace,
         "wrapper_path": str(wrapper_path),
         "wrapper_exists": wrapper_exists,
+        "wrapper_is_file": wrapper_is_file,
+        "wrapper_is_symlink": wrapper_is_symlink,
         "command_allowed": command_allowed,
         "pinned_command_path": normalized_pinned_path,
         "pinned_path_matches": pinned_path_matches,
+        "behavioral_smoke": behavioral_smoke,
         "runtime_surface": runtime_surface,
         "script_path": str(SCRIPT_PATH),
+        "configuration_source": "env_or_safe_defaults",
         "warnings": warnings,
         "notes": [
             "預設 reviewer 路徑要求 fresh one-shot session；請勿重用長互動 session。",
             "若 QA / Security Review 需要不同模型家族，請在 Copilot CLI 或對應 wrapper 設定中切換，而不是沿用 Engineer 的聊天上下文。",
-            "hardening 啟用後，reviewer command 必須同時通過 allowlist 與 pinned path 驗證。",
+            "hardening 啟用後，reviewer command 必須同時通過 allowlist、workspace 外部路徑、pinned path 與 behavioral smoke 驗證。",
+            "workspace 內的 .vscode/settings.json 不再作為 reviewer command 或 wrapper path 的信任來源。",
         ],
     }
 
