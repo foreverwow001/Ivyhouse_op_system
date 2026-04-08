@@ -40,6 +40,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres@127.0.0.1:5432/ivyhouse_api_ci?schema=public
+      DIRECT_URL: postgresql://postgres@127.0.0.1:5432/ivyhouse_api_ci?schema=public
       ADMIN_DATABASE_URL: postgresql://postgres@127.0.0.1:5432/postgres
       NEXT_PUBLIC_PORTAL_API_BASE_URL: http://127.0.0.1:3000/api
     steps:
