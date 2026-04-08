@@ -6,6 +6,7 @@
 **Phase**: Phase 1
 **Primary Module**: Platform / Persistence
 **Work Type**: implementation
+**Track**: product-system
 
 ---
 
@@ -182,6 +183,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [product-system]
 plan_created: 2026-04-02 00:00:00
 plan_approved: 2026-04-02 00:00:00
 scope_policy: strict

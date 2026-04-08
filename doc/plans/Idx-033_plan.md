@@ -6,6 +6,7 @@
 **Phase**: Phase 1 → Governance
 **Primary Module**: Architecture governance
 **Work Type**: governance / specification
+**Track**: product-system
 **Operating Mode**: cross-mode-governance
 
 > 本輪同時覆蓋 `內部測試模式` 與 `單人營運正式層`，目的是把既有決策落成 repo-native authority 與最小引用點，不包含 runtime implementation。`cross-mode-governance` 只是文件治理用 meta marker，不是第三種正式 operating mode。
@@ -242,6 +243,7 @@ work_unit:
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
 operating_mode: [cross-mode-governance]
+track: [product-system]
 plan_created: [2026-04-08 00:00:00]
 plan_approved: [2026-04-08 via askQuestions docs-only governance gate; user confirmed direct white-list doc edits may proceed]
 scope_policy: [strict]

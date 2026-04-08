@@ -6,6 +6,7 @@
 **Phase**: Phase 1 → Workflow Hardening
 **Primary Module**: Workflow reviewer surface
 **Work Type**: implementation / governance
+**Track**: workflow-core
 
 ---
 
@@ -206,6 +207,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [workflow-core]
 plan_created: [2026-04-07]
 plan_approved: [2026-04-08 via `/Dev` batched `vscode_askQuestions` formal gate]
 scope_policy: [strict]

@@ -6,6 +6,7 @@
 **Phase**: Phase 1 → Workflow Upgrade Follow-up
 **Primary Module**: Workflow Tooling / Governance
 **Work Type**: migration
+**Track**: workflow-core
 
 ---
 
@@ -243,6 +244,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [workflow-core]
 plan_created: 2026-04-07 13:55:00
 plan_approved: 2026-04-07 13:56:00
 scope_policy: strict

@@ -6,6 +6,7 @@
 **Phase**: Phase 1 → Post-Launch
 **Primary Module**: 跨模組
 **Work Type**: implementation / governance
+**Track**: product-system
 
 ---
 
@@ -244,6 +245,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [product-system]
 plan_created: [2026-04-04]
 plan_approved: [2026-04-07 planning refinement started after Idx-023 hosted preflight evidence landed]
 scope_policy: [strict]

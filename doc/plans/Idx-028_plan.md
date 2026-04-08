@@ -8,6 +8,7 @@
 **Phase**: Phase 1 → Go-Live
 **Primary Module**: Portal
 **Work Type**: implementation
+**Track**: product-system
 
 ---
 
@@ -232,6 +233,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [product-system]
 plan_created: [2026-04-05 09:42:36]
 plan_approved: [待用戶確認]
 scope_policy: [strict]

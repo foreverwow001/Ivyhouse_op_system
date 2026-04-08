@@ -8,6 +8,7 @@
 **Phase**: Phase 1 → Go-Live Support
 **Primary Module**: Portal / Workflow Tooling
 **Work Type**: governance / implementation
+**Track**: workflow-core
 
 ---
 
@@ -248,6 +249,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [workflow-core]
 plan_created: [2026-04-04 19:13:39]
 plan_approved: [2026-04-04 19:13:39]
 scope_policy: [strict]

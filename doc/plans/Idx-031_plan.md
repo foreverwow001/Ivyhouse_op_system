@@ -6,6 +6,7 @@
 **Phase**: Phase 1 → Workflow Hardening
 **Primary Module**: Workflow authority / prompt surface
 **Work Type**: governance
+**Track**: workflow-core
 
 ---
 
@@ -212,6 +213,7 @@ work_unit:
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [workflow-core]
 plan_created: [2026-04-07]
 plan_approved: [2026-04-07 user requested workflow hardening before continuing Idx-024]
 scope_policy: [strict]

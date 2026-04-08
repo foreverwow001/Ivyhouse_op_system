@@ -6,6 +6,7 @@
 **Phase**: Phase 1
 **Primary Module**: Daily Ops / Production Planning / Approval
 **Work Type**: implementation
+**Track**: product-system
 
 ---
 
@@ -128,6 +129,7 @@ research_required: true
 
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
+track: [product-system]
 plan_created: 2026-04-03 15:20:00
 plan_approved: 2026-04-03 15:20:00
 scope_policy: strict

@@ -6,6 +6,7 @@
 **Phase**: Phase 2
 **Primary Module**: 跨模組
 **Work Type**: implementation / governance
+**Track**: product-system
 
 ---
 
@@ -105,3 +106,15 @@ research_required: true
 
 - Security Review：Observability 日誌不可含敏感資料（個資、密鑰、session token）
 - Domain Review：多倉 opening balance 的營運規則對齊
+
+---
+
+## 執行資訊
+
+<!-- EXECUTION_BLOCK_START -->
+# Plan 狀態
+track: [product-system]
+scope_exception_note: [accepted exception - 此 execution block 為歷史主 plan 的最小補位，只補 Track 留痕以承接 Idx-036，不擴寫其他新制欄位]
+plan_created: [pending historical backfill]
+scope_exceptions: []
+<!-- EXECUTION_BLOCK_END -->

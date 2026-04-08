@@ -6,6 +6,7 @@
 **Phase**: Phase 1 → Governance
 **Primary Module**: Flow governance
 **Work Type**: docs-only governance / specification
+**Track**: product-system
 **Operating Mode**: single-operator-production
 
 ---
@@ -209,6 +210,7 @@ work_unit:
 <!-- EXECUTION_BLOCK_START -->
 # Plan 狀態
 operating_mode: [single-operator-production]
+track: [product-system]
 plan_created: [2026-04-08 00:00:00]
 plan_approved: [docs-only governance task; white-list doc edits requested by user]
 scope_policy: [strict]
