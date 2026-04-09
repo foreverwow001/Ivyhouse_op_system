@@ -2,6 +2,8 @@
 
 本文件是 Ivyhouse OP System 的流程與狀態權威入口。凡是涉及核心 workflow、狀態流、handoff、approval boundary、人工覆核、失敗回退或不可逆步驟的設計，都必須先對照本文件。
 
+若要判斷 external infra facts / platform control evidence 何時可 `deferred`、何時必須在 `single-operator-production` 前補齊，authority 以 `doc/architecture/decisions/operating_mode_and_database_provider_baseline.md` 為準，不在各 flow 文檔各自判定。
+
 ## 目標
 
 - 定義烘焙營運系統的主營運主線。

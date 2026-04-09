@@ -36,6 +36,7 @@
 - `release-preflight` 不依賴 `quality-gate` 是本輪刻意的 scope 切割：本 task 只處理 authorized actor / `assignment_ref` / production checklist gate，不把一般 CI 成功與否混進 release authority decision。
 - 這一輪是高風險 release / sign-off slice，但 scope 必須嚴格限制在 preflight guard，不擴成 full deploy automation、environment reviewer automation 或外部 sign-off 平台整合。
 - `single-operator-production` 允許同一人兼任 `Release owner` / `Release operator`，目前保守 allowlist 只納入已在 checklist 明示的 `foreverwow001`。
+- 依 `doc/architecture/decisions/operating_mode_and_database_provider_baseline.md` 的 defer policy，同一批 external infra / platform control evidence 若只存在於 `internal-testing` artifact，可誠實標記為 `deferred`；但本 plan 的 operating mode 是 `single-operator-production`，因此 required reviewers / branch protection 平台證據與 backup / restore evidence 仍只能列為未解除缺口，不能誤寫成已完成。
 - production backup / restore checklist 目前仍為 fail-closed，因此 repo-native guard 應穩定阻擋 production `release-preflight`，直到外部 owner 補齊證據。
 - 已知風險：workflow 的 global concurrency `cancel-in-progress: true` 可能在同一 ref 有新 push 時取消 `workflow_dispatch` 的 `release-preflight` / `release-preflight-guard`；本輪只誠實留痕，不調整 concurrency 策略。
 

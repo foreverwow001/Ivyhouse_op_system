@@ -45,6 +45,7 @@
 | Idx-035 | 單人營運正式層 release-preflight 觸發者身份與角色邊界 | Phase 1 → Governance | product-system | QA | Idx-024, Idx-033, Idx-034 | release-preflight authorized actor boundary、release assignment label 語意、authority cross-reference | 已完成 docs-only governance 收斂：staging 僅限被指派 `Release operator` 觸發並由 `Backend owner` 協助判讀，production 僅限被指派 `Release owner` 觸發且 backup / restore checklist 未完整時 fail-closed；`Release owner` / `Release operator` 明定為 release assignment label，不是新 RBAC 角色，且不含 GitHub 權限 enforcement 或 production sign-off |
 | Idx-036 | 任務 Track 欄位治理補強：系統任務與 workflow 任務分流 | Phase 1 → Governance | workflow-core | QA | Idx-033 | Track 欄位治理規則、implementation index Track 回填、plan template `track` 錨點、主 plan 回補、README 說明 | 雖影響 product-system artifacts，但本輪主要修改對象是 planning / workflow governance metadata，因此 Track 明確歸為 `workflow-core` |
 | Idx-037 | release-preflight authorized actor boundary repo-native enforcement | Phase 1 → Governance | product-system | QA | Idx-024, Idx-033, Idx-034, Idx-035 | workflow guard job、repo-native validation script、plan / log artifact、governance cross-reference | 已將 authorized actor boundary 從 docs-only 收斂推進到 repo-native fail-closed guard：`workflow_dispatch` 新增 `assignment_ref` reference gate、新增獨立 `release-preflight-guard` job，並由 environment-bound `release-preflight` 以 `needs` 依賴它；`quality-gate` 不承接 guard 是本輪刻意 scope 切割，不把一般 CI 成功與否混進 release authority decision；staging 與 production allowlist 暫只允許 `foreverwow001`；production 因 backup / restore checklist 仍為 `fail`，技術 guard 會穩定阻擋 production release-preflight，required reviewers / team membership / external sign-off 仍屬 repo 外 follow-up |
+| Idx-038 | internal-testing deferred external/platform evidence 治理 authority 補位 | Phase 1 → Governance | product-system | QA | Idx-024, Idx-033, Idx-037 | defer policy authority、cross-reference、plan / log artifact | 以 docs-only governance authority 補位，正式明文化 `internal-testing` 可暫緩 external infra facts 與 platform control evidence，但必須在 plan / log 誠實標記 `deferred`；一旦要敘述成 `single-operator-production`，仍必須先補齊 evidence，故本輪不暗示 external blocker 已解除。`cross-mode-governance` 只作 governance meta marker，不是第三種正式 operating mode |
 
 ## 依賴語意
 
@@ -88,11 +89,11 @@
 
 ## 統計資訊
 
-總任務數：37
+總任務數：38
 - Approved：0
 - Planning：1
 - In Progress：0
-- QA：4
+- QA：5
 - Completed：32
 
 ## 任務編號規則
@@ -111,4 +112,4 @@
 - `architecture/decisions/README.md`
 - `architecture/phase1_mvp_three_phase_execution_plan.md`
 
-最後更新：2026-04-08
+最後更新：2026-04-09

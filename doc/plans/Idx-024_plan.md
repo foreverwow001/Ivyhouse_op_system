@@ -33,6 +33,7 @@
 - `Idx-023` 已完成 go-live blocker 與 GitHub-hosted `release-preflight` artifact，但 post-launch 支撐面仍是空窗
 - 目前 happy path 已有 mainline smoke 與 regression evidence，真正高風險的是 cancel / rejection / unauthorized / idempotency / rollback 等邊界場景
 - 正式環境已具備 staging `release-preflight` binding 與 artifact 路徑，但 backup / restore、health readback、on-call escalation 仍未收斂成正式 runbook
+- 依 `doc/architecture/decisions/operating_mode_and_database_provider_baseline.md` 的 defer policy，本 task 的 external infra / platform gaps 在 `internal-testing` artifact 可維持 `deferred`，但若任何 release、environment 或 gate 要被敘述成 `single-operator-production`，仍必須先補齊對應 evidence；本 plan 不宣稱 blocker 已解除
 - Portal 已承接 intake / daily ops，營運團隊需要對應的操作與排故手冊，但手冊應建立在已凍結的流程與 runbook 上，而不是與高風險驗證並行發散
 
 ### Non-goals
