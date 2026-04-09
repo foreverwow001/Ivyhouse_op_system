@@ -225,6 +225,7 @@ ensure_git() {
 
 ensure_python_with_venv || true
 ensure_git
+ensure_command_with_apt_fallback "ripgrep" "rg" ripgrep || true
 ensure_command_with_apt_fallback "Node.js" "node" nodejs npm || true
 ensure_command_with_apt_fallback "npm" "npm" npm nodejs || true
 ensure_npm_cli "Copilot" "copilot" "@github/copilot" || true

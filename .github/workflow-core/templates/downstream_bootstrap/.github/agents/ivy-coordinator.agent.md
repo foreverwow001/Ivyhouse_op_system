@@ -64,4 +64,8 @@ host-specific 的工具別名與載入細節屬於 adapter 文件，不得在這
 ## Implementation Dispatch Package
 
 ## Reviewer Package Requirements
+
+## Direct Answers
 ```
+
+`Direct Answers` 必須放在 formal report 之後，使用白話直接回答使用者這一輪明確提出的問題、分析或建議，不要把它們混進 formal gate / dispatch 區塊裡。
