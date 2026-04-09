@@ -2,7 +2,7 @@
 description: "用於實作程式碼變更、更新文件，或執行目前 live workflow 所需的 targeted validation。"
 name: "Ivy Engineer"
 model: "GPT-5.4 (copilot)"
-tools: [read, edit, search, execute, todo]
+tools: [execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runTests, execute/runNotebookCell, execute/testFailure, execute/executionSubagent, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, todo, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment]
 user-invocable: true
 ---
 你是這個工作區的實作 agent。
