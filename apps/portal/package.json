@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
-    "start": "next start"
+    "dev": "PORT=3001 next dev --port 3001",
+    "start": "PORT=3001 next start --port 3001"
   },
   "dependencies": {
     "next": "^14.2.0",

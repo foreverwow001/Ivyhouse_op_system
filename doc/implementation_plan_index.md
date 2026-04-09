@@ -46,6 +46,7 @@
 | Idx-036 | 任務 Track 欄位治理補強：系統任務與 workflow 任務分流 | Phase 1 → Governance | workflow-core | QA | Idx-033 | Track 欄位治理規則、implementation index Track 回填、plan template `track` 錨點、主 plan 回補、README 說明 | 雖影響 product-system artifacts，但本輪主要修改對象是 planning / workflow governance metadata，因此 Track 明確歸為 `workflow-core` |
 | Idx-037 | release-preflight authorized actor boundary repo-native enforcement | Phase 1 → Governance | product-system | QA | Idx-024, Idx-033, Idx-034, Idx-035 | workflow guard job、repo-native validation script、plan / log artifact、governance cross-reference | 已將 authorized actor boundary 從 docs-only 收斂推進到 repo-native fail-closed guard：`workflow_dispatch` 新增 `assignment_ref` reference gate、新增獨立 `release-preflight-guard` job，並由 environment-bound `release-preflight` 以 `needs` 依賴它；`quality-gate` 不承接 guard 是本輪刻意 scope 切割，不把一般 CI 成功與否混進 release authority decision；staging 與 production allowlist 暫只允許 `foreverwow001`；production 因 backup / restore checklist 仍為 `fail`，技術 guard 會穩定阻擋 production release-preflight，required reviewers / team membership / external sign-off 仍屬 repo 外 follow-up |
 | Idx-038 | internal-testing deferred external/platform evidence 治理 authority 補位 | Phase 1 → Governance | product-system | QA | Idx-024, Idx-033, Idx-037 | defer policy authority、cross-reference、plan / log artifact | 以 docs-only governance authority 補位，正式明文化 `internal-testing` 可暫緩 external infra facts 與 platform control evidence，但必須在 plan / log 誠實標記 `deferred`；一旦要敘述成 `single-operator-production`，仍必須先補齊 evidence，故本輪不暗示 external blocker 已解除。`cross-mode-governance` 只作 governance meta marker，不是第三種正式 operating mode |
+| Idx-039 | 本機啟動基線收斂：Supabase DATABASE_URL 讀取驗證、API／Portal 固定埠位、最小 smoke path 與單一操作文檔 | Phase 1 | product-system | QA | Idx-023, Idx-033 | 固定本機埠位、Supabase env 讀取驗證、最小 smoke path、單一操作文檔 | 已在白名單內收斂 API `127.0.0.1:3000` / Portal `3001`、Supabase `DATABASE_URL` runtime readback、read-only smoke route 與 `project_maintainers/chat` dated 單檔操作文檔；QA 與 Security reviewer 均為 `PASS_WITH_RISK`，仍僅適用 `internal-testing`，不擴張到 auth / schema / deploy 治理 |
 
 ## 依賴語意
 
@@ -66,7 +67,8 @@
 3. **Idx-023（Tier 1 Blocker）**：go-live 前必須完成。關鍵路徑為前端 Portal UI；`Idx-028` 已交付其第一個最小切片，後續再擴到 intake / daily ops / CI/CD / env / master data 等 blocker 面。
 4. **Idx-024（Tier 2 High Risk）**：review 收口中。三個 slices 已完成；剩餘阻斷為 production backup/restore 外部 sign-off，且 `Idx-037` 已把 checklist 狀態接成 repo-native fail-closed technical block。
 5. **Idx-032（Tier 2 Workflow Hardening）**：已完成。reviewer wrapper / preflight 的 behavioral fail-closed 與 Domain contract 已收口，`Idx-024` 的 repo 內 reviewer blocker 已解除；剩餘仍是 external infra sign-off。
-6. **Idx-025（Tier 3 Progressive）**：待 `Idx-024` 收斂後再啟動。測試深化、Observability、多窗口 opening balance、效能基準。
+6. **Idx-039（Tier 2 Internal Testing Baseline）**：QA。已收斂本機 API / Portal 啟動基線，固定 API `127.0.0.1:3000`、Portal `3001`，並補齊 Supabase `DATABASE_URL` runtime readback、read-only smoke path 與單一操作文檔；QA / Security reviewer 已完成且均為 `PASS_WITH_RISK`，仍僅適用 `internal-testing`。
+7. **Idx-025（Tier 3 Progressive）**：待 `Idx-024` 收斂後再啟動。測試深化、Observability、多窗口 opening balance、效能基準。
 
 ## 狀態說明
 
@@ -89,11 +91,11 @@
 
 ## 統計資訊
 
-總任務數：38
+總任務數：39
 - Approved：0
 - Planning：1
 - In Progress：0
-- QA：5
+- QA：6
 - Completed：32
 
 ## 任務編號規則
